@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import NumberFlow from '@number-flow/vue'
-import { Menu, Star, X } from 'lucide-vue-next'
-import { GitHubIcon, TelegramIcon, XIcon } from 'vue3-simple-icons'
+import { Github, Menu, X } from 'lucide-vue-next'
 
 const showMenu = ref(false)
-const { title, telegram, twitter, github } = useAppConfig()
-const { rawStats } = useGithubStats()
+const { title } = useAppConfig()
 </script>
 
 <template>
@@ -93,23 +90,6 @@ const { rawStats } = useGithubStats()
                   md:w-fit
                 "
               >
-                <Button
-                  as-child
-                  variant="outline"
-                  size="sm"
-                >
-                  <a
-                    :href="github"
-                    target="_blank"
-                    :title="$t('layouts.footer.social.github')"
-                    class="flex items-center gap-1.5"
-                  >
-                    <GitHubIcon class="size-4" />
-                    <Star class="size-3" />
-                    <NumberFlow class="tabular-nums" :value="rawStats.stars" />
-                  </a>
-                </Button>
-
                 <SwitchLanguage />
                 <SwitchTheme />
               </div>
@@ -159,62 +139,87 @@ const { rawStats } = useGithubStats()
               </div>
             </NuxtLink>
 
-            <small class="block text-center text-sm text-muted-foreground">
-              &copy; {{ new Date().getFullYear() }}
-              <a
-                href="https://html.zone"
-                target="_blank"
-                title="HTML.ZONE"
-                class="hover:text-primary"
-              >
-                {{ $t('layouts.footer.copyright') }}
-              </a>
-            </small>
+            <div
+              class="
+                flex flex-col items-center gap-1
+                md:items-start
+              "
+            >
+              <small class="block text-center text-sm text-muted-foreground">
+                &copy; {{ new Date().getFullYear() }} {{ $t('layouts.footer.copyright') }}
+              </small>
+              <div class="flex items-center gap-2">
+                <NuxtLink
+                  to="/privacy"
+                  class="
+                    text-xs text-muted-foreground transition-colors
+                    hover:text-primary
+                  "
+                  :title="$t('layouts.footer.privacy')"
+                >
+                  {{ $t('layouts.footer.privacy') }}
+                </NuxtLink>
+                <span class="text-xs text-muted-foreground">|</span>
+                <NuxtLink
+                  to="/terms"
+                  class="
+                    text-xs text-muted-foreground transition-colors
+                    hover:text-primary
+                  "
+                  :title="$t('layouts.footer.terms')"
+                >
+                  {{ $t('layouts.footer.terms') }}
+                </NuxtLink>
+              </div>
+            </div>
           </div>
 
-          <div class="flex justify-center gap-6 text-sm">
-            <a
-              v-if="twitter"
-              :href="twitter"
-              target="_blank"
-              rel="noopener noreferrer"
-              :title="$t('layouts.footer.social.twitter')"
-              aria-label="Twitter"
-              class="
-                block text-muted-foreground
-                hover:text-primary
-              "
+          <!-- 右側開源聲明與原始碼 -->
+          <div
+            class="
+              flex flex-col items-center gap-1.5
+              md:items-end md:text-right
+            "
+          >
+            <i18n-t
+              keypath="layouts.footer.attribution"
+              tag="p"
+              class="text-xs text-muted-foreground/80"
             >
-              <XIcon class="size-6" />
-            </a>
-            <a
-              v-if="telegram"
-              :href="telegram"
-              target="_blank"
-              rel="noopener noreferrer"
-              :title="$t('layouts.footer.social.telegram')"
-              aria-label="Telegram"
-              class="
-                block text-muted-foreground
-                hover:text-primary
-              "
+              <template #sink>
+                <a
+                  href="https://github.com/miantiao-me/Sink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="
+                    underline transition-colors
+                    hover:text-primary
+                  "
+                >
+                  Sink
+                </a>
+              </template>
+            </i18n-t>
+            <div
+              class="flex items-center gap-1.5 text-xs text-muted-foreground/80"
             >
-              <TelegramIcon class="size-6" />
-            </a>
-            <a
-              v-if="github"
-              :href="github"
-              target="_blank"
-              rel="noopener noreferrer"
-              :title="$t('layouts.footer.social.github')"
-              aria-label="GitHub"
-              class="
-                block text-muted-foreground
-                hover:text-primary
-              "
-            >
-              <GitHubIcon class="size-6" />
-            </a>
+              <Github class="size-3.5" />
+              <i18n-t keypath="layouts.footer.source_code" tag="span">
+                <template #repo>
+                  <a
+                    href="https://github.com/alvin000009238/sink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="
+                      font-medium underline transition-colors
+                      hover:text-primary
+                    "
+                  >
+                    alvin000009238/sink
+                  </a>
+                </template>
+              </i18n-t>
+            </div>
           </div>
         </div>
       </div>

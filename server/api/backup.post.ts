@@ -8,9 +8,10 @@ defineRouteMeta({
 export default eventHandler(async (event) => {
   const env = event.context.cloudflare.env
 
+  requireAdmin(event)
   requireR2Bucket(env)
 
-  await backupKVToR2(env, true)
+  await backupLinksToR2(env, true)
 
   return {
     success: true,

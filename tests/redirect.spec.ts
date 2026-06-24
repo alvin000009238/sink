@@ -1,5 +1,5 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import { deleteStoredLinks, fetch, postJson } from './utils'
+import { deleteCachedLink, deleteStoredLinks, fetch, getCachedLink, postJson } from './utils'
 
 type CfRequestInit = RequestInit & { cf?: { country?: string } }
 
@@ -76,6 +76,25 @@ describe('/', () => {
 
     expect(response.status).toBe(301)
     expect(response.headers.get('Location')).toBe(defaultUrl)
+  })
+
+  it('falls back to D1 and rebuilds redirect cache when KV misses', async () => {
+    const slug = `d1-cache-${crypto.randomUUID()}`
+    const targetUrl = 'https://example.com/from-d1'
+
+    const createResponse = await postJson('/api/link/create', {
+      url: targetUrl,
+      slug,
+    })
+    expect(createResponse.status).toBe(201)
+    createdSlugs.push(slug)
+
+    await deleteCachedLink(slug)
+    const response = await fetch(`/${slug}`, { redirect: 'manual' })
+
+    expect(response.status).toBe(301)
+    expect(response.headers.get('Location')).toBe(targetUrl)
+    expect(await getCachedLink(slug)).toMatchObject({ slug, url: targetUrl })
   })
 
   it('shows geo URL in unsafe warning', async () => {

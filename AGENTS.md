@@ -12,21 +12,21 @@ Sink is a link shortener with analytics, running 100% on Cloudflare. Uses Nuxt 4
 
 ```
 app/                    # Nuxt 4 application (main app layer)
-  ├── components/       # Vue components (PascalCase)
-  │   └── ui/           # shadcn-vue components (DO NOT EDIT - auto-generated)
-  ├── composables/      # Vue composables (camelCase, use* prefix)
-  ├── pages/            # File-based routing
-  ├── types/            # TypeScript types (re-exports from shared/)
-  ├── utils/            # Utility functions
-  └── lib/              # Shared helpers
+  |-- components/       # Vue components (PascalCase)
+  |   `-- ui/           # shadcn-vue components (DO NOT EDIT - auto-generated)
+  |-- composables/      # Vue composables (camelCase, use* prefix)
+  |-- pages/            # File-based routing
+  |-- types/            # TypeScript types (re-exports from shared/)
+  |-- utils/            # Utility functions
+  `-- lib/              # Shared helpers
 layers/dashboard/       # Dashboard layer (extends app/)
-  └── app/components/dashboard/  # Dashboard-specific components
+  `-- app/components/dashboard/  # Dashboard-specific components
 shared/                 # Shared code (client + server)
-  ├── schemas/          # Zod validation schemas
-  └── types/            # Shared TypeScript types
+  |-- schemas/          # Zod validation schemas
+  `-- types/            # Shared TypeScript types
 server/                 # Nitro server (Cloudflare Workers)
-  ├── api/              # API endpoints (method suffix: create.post.ts)
-  └── utils/            # Server utilities (auto-imported)
+  |-- api/              # API endpoints (method suffix: create.post.ts)
+  `-- utils/            # Server utilities (auto-imported)
 tests/                  # Vitest tests (Cloudflare Workers pool)
 ```
 
@@ -37,7 +37,7 @@ Use **pnpm** (v10.28.2, enforced via `packageManager`) with **Node.js 22+**.
 ```bash
 # Development
 pnpm dev                  # Start dev server (port 7465)
-pnpm build                # Production build (needs 8GB heap)
+pnpm build                # Production build (needs 8GB heap. On Windows PowerShell, run: `$env:NODE_OPTIONS="--max-old-space-size=8192"; pnpm nuxt build`)
 pnpm preview              # Worker preview via wrangler
 pnpm lint:fix             # ESLint with auto-fix (ALWAYS run before commit)
 pnpm types:check          # TypeScript type check
@@ -133,15 +133,29 @@ Access via destructuring `event.context`:
 
 ```typescript
 const { cloudflare } = event.context
-const { KV, ANALYTICS, AI, R2 } = cloudflare.env
+const { DB, KV, ANALYTICS, AI, R2 } = cloudflare.env
 ```
 
-| Binding     | Type             | Purpose                      |
-| ----------- | ---------------- | ---------------------------- |
-| `KV`        | Workers KV       | Link storage (`link:{slug}`) |
-| `ANALYTICS` | Analytics Engine | Click tracking & analytics   |
-| `AI`        | Workers AI       | AI-powered slug generation   |
-| `R2`        | R2 Bucket        | Image uploads & backup       |
+| Binding     | Type             | Purpose                         |
+| ----------- | ---------------- | ------------------------------- |
+| `DB`        | D1 Database      | Primary relational storage      |
+| `KV`        | Workers KV       | Redirect cache (`link:{slug}`)  |
+| `ANALYTICS` | Analytics Engine | Click tracking & analytics      |
+| `AI`        | Workers AI       | AI-powered slug generation      |
+| `R2`        | R2 Bucket        | Optional image uploads & backup |
+
+D1 migrations live in `migrations/`. Run `pnpm gen:types` after changing `wrangler.jsonc` bindings.
+
+## Auth and Ownership
+
+- `/api/auth/google/start` and `/api/auth/google/callback` implement Google OAuth for `student.clhs.tyc.edu.tw` accounts.
+- Site token auth still works as the system admin. Student sessions are stored in D1 `auth_sessions` and may also be sent as the `SinkSession` cookie.
+- Student link and analytics APIs must filter by `links.owner_id`; admins can see and moderate all links.
+- Students can submit reports through `/api/link/report` and read their own report history through `/api/link/reports`; admins review all reports through `/api/admin/reports`.
+- Admins manage OAuth users through `/api/admin/users` and `/api/admin/user-status`. Disabled users cannot use existing sessions because session lookup only accepts active students.
+- `/api/link/list` supports `domain`, `creator`/`owner`, `purpose`, and `order` filters. `purpose` currently reuses the link comment value.
+- Admins can migrate legacy KV JSON link records into D1 through `/api/admin/kv-migrate`; use `prefix`, `cursor`, and `limit` to run it in batches.
+- `slug_blacklist` and app `reserveSlug` values are enforced before new link creation. Admins list and manage blacklist entries through `/api/admin/slug-blacklist`. Students are limited by `dailyCreateLimit`; admins are exempt.
 
 ## Testing Patterns
 
@@ -189,17 +203,20 @@ Follow Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`
 
 API routes use method suffix convention:
 
-- `create.post.ts` → `POST /api/link/create`
-- `query.get.ts` → `GET /api/link/query`
-- `edit.put.ts` → `PUT /api/link/edit`
+- `create.post.ts` -> `POST /api/link/create`
+- `query.get.ts` -> `GET /api/link/query`
+- `edit.put.ts` -> `PUT /api/link/edit`
 
 Server utils in `server/utils/` are auto-imported:
 
-- `getLink(event, slug)` - Fetch link from KV
-- `putLink(event, link)` - Store link in KV
-- `deleteLink(event, slug)` - Remove link from KV
+- `getLink(event, slug)` - Fetch link from D1, using KV only for redirect cache when a cache TTL is passed
+- `putLink(event, link)` - Store link in D1 and refresh redirect cache
+- `deleteLink(event, slug)` - Remove link from D1 and redirect cache
+- `setLinkStatus(event, slug, status)` - Admin moderation status update and redirect cache invalidation
+- `backupLinksToR2(env, isManual)` - Export active, unexpired D1 links to R2 backup JSON when the optional R2 binding is enabled
 - `normalizeSlug(event, slug)` - Case normalization
 - `buildShortLink(event, slug)` - Construct full URL
+- `scopeQueryToOwnedLinks(event, query)` - Restrict stats/logs queries to owned slugs for student sessions
 
 ## OpenAPI
 

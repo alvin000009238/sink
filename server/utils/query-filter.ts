@@ -1,4 +1,5 @@
 import type { Query } from '#shared/schemas/query'
+import type { H3Event } from 'h3'
 import type { SelectStatement } from 'sql-bricks'
 import type { BlobsKey } from './access-log'
 
@@ -21,6 +22,37 @@ export function query2filter(query: Query) {
   }
 
   return filter.length ? and(...filter) : []
+}
+
+export async function scopeQueryToOwnedLinks<T extends Query>(event: H3Event, query: T): Promise<T> {
+  const user = getAuthUser(event)
+  if (!user || user.role === 'admin')
+    return query
+
+  const result = await event.context.cloudflare.env.DB.prepare(`
+    SELECT slug
+    FROM links
+    WHERE owner_id = ?
+      AND status = 'active'
+  `).bind(user.id).all<{ slug: string }>()
+  const ownedSlugs = new Set(result.results.map(link => link.slug))
+
+  if (query.slug) {
+    const requestedSlugs = query.slug.split(',').filter(Boolean)
+    if (requestedSlugs.some(slug => !ownedSlugs.has(slug))) {
+      throw createError({
+        status: 403,
+        statusText: 'Forbidden',
+      })
+    }
+
+    return query
+  }
+
+  return {
+    ...query,
+    slug: [...ownedSlugs].join(',') || '__no_owned_links__',
+  }
 }
 
 export function appendTimeFilter(sql: SelectStatement, query: Query): SelectStatement {

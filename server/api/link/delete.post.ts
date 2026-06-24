@@ -35,6 +35,16 @@ export default eventHandler(async (event) => {
     })
   }
 
-  const { slug } = await readValidatedBody(event, DeleteSchema.parse)
+  const user = requireAuthUser(event)
+  const body = await readValidatedBody(event, DeleteSchema.parse)
+  const slug = normalizeSlug(event, body.slug)
+  const row = await event.context.cloudflare.env.DB.prepare('SELECT owner_id FROM links WHERE slug = ?').bind(slug).first<{ owner_id: string }>()
+  if (!row || (user.role !== 'admin' && row.owner_id !== user.id)) {
+    throw createError({
+      status: 404,
+      statusText: 'Link not found',
+    })
+  }
+
   await deleteLink(event, slug)
 })

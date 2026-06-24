@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { fetch, fetchWithAuth } from '../utils'
+import { createTestSession, fetch, fetchWithAuth } from '../utils'
 
 interface VerifyResponse {
   name: string
   url: string
+  user: {
+    email: string
+    role: 'student' | 'admin'
+  }
 }
 
 describe('/api/verify', () => {
@@ -16,6 +20,7 @@ describe('/api/verify', () => {
     expect(data).toHaveProperty('url')
     expect(data.name).toBeTypeOf('string')
     expect(data.url).toBeTypeOf('string')
+    expect(data.user.role).toBe('admin')
   })
 
   it('returns correct response structure', async () => {
@@ -26,6 +31,19 @@ describe('/api/verify', () => {
     const data = await response.json() as VerifyResponse
     expect(data.name).toBe('Sink')
     expect(data.url).toBe('https://sink.cool')
+  })
+
+  it('returns the current student for a session cookie', async () => {
+    const email = `verify-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`
+    const token = await createTestSession(email)
+    const response = await fetch('/api/verify', {
+      headers: { Cookie: `SinkSession=${token}` },
+    })
+
+    expect(response.status).toBe(200)
+    const data = await response.json() as VerifyResponse
+    expect(data.user.email).toBe(email)
+    expect(data.user.role).toBe('student')
   })
 
   it('returns 401 when accessing without auth', async () => {

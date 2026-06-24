@@ -62,7 +62,7 @@ export default eventHandler(async (event) => {
     throw createError({ status: 404, statusText: 'Not Found' })
   }
 
-  const query = await getValidatedQuery(event, StatsExportQuerySchema.parse)
+  const query = await scopeQueryToOwnedLinks(event, await getValidatedQuery(event, StatsExportQuerySchema.parse))
   const sql = query2sql(query, event)
   const result = await useWAE(event, sql) as { data?: AccessExportRow[] }
   const csv = toCsv(result.data ?? [])

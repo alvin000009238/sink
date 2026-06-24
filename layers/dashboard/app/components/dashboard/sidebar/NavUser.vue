@@ -9,6 +9,7 @@ interface User {
 }
 
 const { isMobile } = useSidebar()
+const { user: currentUser, verify, logout } = useCurrentUser()
 
 const hostname = computed<string>(() => {
   if (import.meta.client) {
@@ -17,14 +18,35 @@ const hostname = computed<string>(() => {
   return 'localhost'
 })
 
-const user = computed<User>(() => ({
-  name: 'Root',
-  email: `root@${hostname.value}`,
-  avatar: '/sink.png',
-}))
+const lastUser = ref<User | null>(null)
 
-function logOut() {
-  localStorage.removeItem('SinkSiteToken')
+watch(currentUser, (newVal) => {
+  if (newVal) {
+    lastUser.value = {
+      name: newVal.name || (newVal.role === 'student' ? 'Student' : 'Root'),
+      email: newVal.email || `root@${hostname.value}`,
+      avatar: newVal.picture || '/sink.png',
+    }
+  }
+}, { immediate: true })
+
+const user = computed<User>(() => {
+  if (lastUser.value)
+    return lastUser.value
+  return {
+    name: 'Root',
+    email: `root@${hostname.value}`,
+    avatar: '/sink.png',
+  }
+})
+
+onMounted(() => {
+  if (!currentUser.value)
+    verify().catch(console.error)
+})
+
+async function logOut() {
+  await logout()
   navigateTo('/dashboard/login')
 }
 </script>
@@ -44,7 +66,7 @@ function logOut() {
             <Avatar class="h-8 w-8 rounded-full">
               <AvatarImage :src="user.avatar" :alt="user.name" />
               <AvatarFallback class="rounded-full">
-                R
+                {{ user.name.charAt(0).toUpperCase() }}
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
@@ -65,7 +87,7 @@ function logOut() {
               <Avatar class="h-8 w-8 rounded-full">
                 <AvatarImage :src="user.avatar" :alt="user.name" />
                 <AvatarFallback class="rounded-full">
-                  R
+                  {{ user.name.charAt(0).toUpperCase() }}
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">

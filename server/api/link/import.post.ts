@@ -90,13 +90,13 @@ export default eventHandler(async (event) => {
 
     try {
       const slug = normalizeSlug(event, linkData.slug)
-      const existingLink = await getLink(event, slug)
-
-      if (existingLink) {
+      if (await linkSlugExists(event, slug)) {
         result.skippedItems.push({ index: i, slug, url: linkData.url })
         result.skipped++
         continue
       }
+
+      await enforceLinkCreatePolicy(event, slug)
 
       const now = Math.floor(Date.now() / 1000)
       const link = {

@@ -12,33 +12,33 @@ Visit your Sink instance at `https://your-domain/_docs/scalar` for interactive A
 
 ## Authentication
 
-All API endpoints require authentication via Bearer token in the `Authorization` header:
+API endpoints require either the admin bearer token or a student session cookie. Use the admin token in the `Authorization` header:
 
 ```http
 Authorization: Bearer YOUR_SITE_TOKEN
 ```
 
-The token is the same as `NUXT_SITE_TOKEN` configured in your environment variables.
+The token is the same as `NUXT_SITE_TOKEN` configured in your environment variables. Student sessions are created by Google OAuth and are sent with the `SinkSession` cookie.
 
 ## API Endpoints
 
 ### Links
 
-| Method | Endpoint            | Description                            |
-| ------ | ------------------- | -------------------------------------- |
-| `POST` | `/api/link/create`  | Create a new short link                |
-| `PUT`  | `/api/link/edit`    | Update an existing link                |
-| `POST` | `/api/link/upsert`  | Create or update a link by slug        |
-| `POST` | `/api/link/delete`  | Delete a link                          |
-| `GET`  | `/api/link/query`   | Get a link by slug                     |
-| `GET`  | `/api/link/search`  | Search links                           |
-| `GET`  | `/api/link/list`    | List all links (paginated)             |
-| `GET`  | `/api/link/export`  | Export all links as paginated JSON     |
-| `POST` | `/api/link/import`  | Import links from exported JSON        |
-| `GET`  | `/api/link/ai`      | Generate an AI-powered slug suggestion |
-| `GET`  | `/api/link/og-ai`   | Generate AI-powered OpenGraph metadata |
-| `POST` | `/api/upload/image` | Upload an OpenGraph image to R2        |
-| `POST` | `/api/backup`       | Trigger a manual KV backup to R2       |
+| Method | Endpoint            | Description                                    |
+| ------ | ------------------- | ---------------------------------------------- |
+| `POST` | `/api/link/create`  | Create a new short link                        |
+| `PUT`  | `/api/link/edit`    | Update an existing link                        |
+| `POST` | `/api/link/upsert`  | Create or update a link by slug                |
+| `POST` | `/api/link/delete`  | Delete a link                                  |
+| `GET`  | `/api/link/query`   | Get a link by slug                             |
+| `GET`  | `/api/link/search`  | Search owned links, or all links as admin      |
+| `GET`  | `/api/link/list`    | List owned links, or all links as admin        |
+| `GET`  | `/api/link/export`  | Export owned links, or all links as admin      |
+| `POST` | `/api/link/import`  | Import links from exported JSON                |
+| `GET`  | `/api/link/ai`      | Generate an AI-powered slug suggestion         |
+| `GET`  | `/api/link/og-ai`   | Generate AI-powered OpenGraph metadata         |
+| `POST` | `/api/upload/image` | Upload an OpenGraph image to optional R2       |
+| `POST` | `/api/backup`       | Trigger a manual D1 link backup to optional R2 |
 
 ### Analytics
 

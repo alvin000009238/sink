@@ -21,13 +21,19 @@
   },
   "login": {
     "title": "登录",
-    "description": "请输入站点令牌以登录",
+    "description": "使用您的学校 Google 账号登录",
     "tips": "提示",
     "preview_token": "预览模式的站点令牌是",
     "submit": "登录",
     "failed": "登录失败，请重试",
     "token_label": "站点令牌",
-    "token_required": "请输入令牌"
+    "token_required": "请输入令牌",
+    "or": "或",
+    "google_school": "使用学校 Google 账号登录",
+    "admin_title": "管理员登录",
+    "admin_description": "请输入站点密匙以登录管理员账号",
+    "admin_login_link": "管理员登录",
+    "back_to_google": "返回 Google 登录"
   },
   "logout": {
     "title": "退出登录？",
@@ -36,7 +42,11 @@
   },
   "layouts": {
     "footer": {
-      "copyright": "产品来自 HTML.ZONE",
+      "copyright": "BST",
+      "privacy": "隐私权政策",
+      "terms": "服务条款",
+      "attribution": "本服务基于 {sink} 修改，原专案采 AGPL-3.0 授权。",
+      "source_code": "Source code: {repo}",
       "social": {
         "email": "邮箱",
         "telegram": "Telegram",
@@ -55,7 +65,8 @@
     "analysis": "分析",
     "realtime": "实时",
     "check": "检测",
-    "migrate": "导入/导出"
+    "migrate": "导入/导出",
+    "reports": "滥用举报"
   },
   "sidebar": {
     "subtitle": "短链接服务",
@@ -136,14 +147,14 @@
       "follow": "在 X(Twitter) 上关注我"
     },
     "stats": {
-      "title": "Sink 数据",
-      "subtitle": "受到全球开发者的信赖",
+      "title": "clhs 短网址数据",
+      "subtitle": "受到用户信赖",
       "stars": "GitHub Stars",
       "forks": "Forks"
     },
     "testimonials": {
       "title": "用户好评",
-      "subtitle": "看看开发者们怎么说"
+      "subtitle": "看看大家怎么描述 clhs 短网址"
     }
   },
   "dashboard": {
@@ -286,8 +297,7 @@
       "newest": "最新",
       "oldest": "最旧",
       "az": "短链(A-Z)",
-      "za": "短链(Z-A)",
-      "tip": "体验功能: 仅对已经加载的链接有效"
+      "za": "短链(Z-A)"
     },
     "update_failed": "更新链接失败",
     "create_failed": "创建链接失败",
@@ -410,10 +420,71 @@
       },
       "errors": {
         "invalid_json": "无效的 JSON 文件",
-        "invalid_format": "文件格式无效，请使用从 Sink 导出的文件",
+        "invalid_format": "文件格式无效，请使用从本服务导出的文件",
         "no_links": "文件中未找到链接",
         "parse_error": "文件解析失败"
       }
     }
+  },
+  "privacy": {
+    "title": "隐私权政策",
+    "description": "clhs 短网址的隐私权政策，我们致力于保护您的个人资料安全。",
+    "last_updated": "最后更新日期：{date}",
+    "introduction_title": "1. 前言",
+    "introduction_desc": "本隐私权政策旨在说明 clhs 短网址（以下简称「本服务」、「我们」）如何收集、使用、储存和保护您在使用本短网址服务时的信息。我们非常重视您的隐私，并承诺依法保护您的个人资料。",
+    "data_collection_title": "2. 信息的收集",
+    "data_collection_desc": "我们在您创建或访问短网址时，可能会收集以下信息：",
+    "data_collection_item1": "短网址数据：您提交的原始长网址与对应的短网址代码（Slug）。请注意，若您在原始网址中包含个人资料，该资料亦会被储存。",
+    "data_collection_item2": "分析日志：当访客点击短网址时，系统会自动收集点击事件，包含 IP 地址（用于分析地理位置）、浏览器类型（User-Agent）、引荐来源（Referer）以及点击时间。",
+    "data_collection_item3": "会话与 Cookie：为了提供管理功能或学生登录，我们会使用必要的 Cookie 和会话储存您的登录状态。",
+    "data_use_title": "3. 信息的使用",
+    "data_use_desc": "我们收集的信息将用于以下用途：",
+    "data_use_item1": "提供、维持并优化我们的短网址重定向服务。",
+    "data_use_item2": "产生链接点击统计数据与分析图表（如地区、设备分布），以便链接创建者进行分析。",
+    "data_use_item3": "预防、检测和打击滥用行为（如恶意链接、诈骗网址），确保服务的安全性与合规性。",
+    "data_storage_title": "4. 数据储存与共享",
+    "data_storage_desc": "您的数据安全地储存在 Cloudflare 提供的无服务器基础建设中（包括 D1 数据库、KV 缓存与 R2 备份空间）。除非法律要求或为防范滥用，我们不会与任何第三方主动共享您的个人识别信息。",
+    "user_rights_title": "5. 您的权益",
+    "user_rights_desc": "您有权随时在仪表板中删除您所创建的短网址，这将会清除与该短网址关联的所有重定向记录与分析数据。如果您对于您的数据有任何疑问，可以联系本服务的管理团队。",
+    "policy_updates_title": "6. 政策更新",
+    "policy_updates_desc": "我们微调或不定期更新本隐私权政策。任何修改将在此页面上发布，并更新最下方的最后更新日期。建议您定期检视本政策以获取最新信息。",
+    "contact_title": "7. 联系我们",
+    "contact_desc": "如果您对本隐私权政策有任何疑问、建议或投诉，请通过项目的 GitHub 仓库或管理员邮箱与我们联系。"
+  },
+  "terms": {
+    "title": "服务条款",
+    "description": "使用 clhs 短网址服务的条款与条件。",
+    "last_updated": "最后更新日期：{date}",
+    "introduction_title": "1. 服务接受",
+    "introduction_desc": "欢迎使用 clhs 短网址服务（以下简称「本服务」）。当您访问或使用本服务时，即表示您已阅读、理解并同意受本服务条款所有内容之约束。若您不同意本条款，请立即停止使用本服务。",
+    "usage_title": "2. 使用规范",
+    "usage_desc": "在使用本服务时，您同意遵守以下规范，不得利用本服务进行任何非法、侵权或滥用行为：",
+    "usage_item1": "禁止建立指向包含病毒、恶意软件、钓鱼网站、诈骗内容或任何非法信息之原始链接。",
+    "usage_item2": "禁止利用自动化程序或工具进行恶意的批量短网址注册或进行拒绝服务攻击 (DoS)。",
+    "usage_item3": "请妥善保管您的登录凭证或站点密码，任何使用您账号所建立之链接，其责任均由您承担。",
+    "limitation_title": "3. 服务限制",
+    "limitation_desc": "本服务主要为学校及个人提供短网址功能。为了防止滥用，我们对短网址的每日建立上限、保留期限等设有一定限制。管理员有权在不另行通知的情况下，对涉嫌滥用、违法或过期的链接进行停用或删除。",
+    "liability_title": "4. 免责声明",
+    "liability_desc": "本服务依「现状」及「现有」基础提供。我们不保证服务绝对不会中断、无错误，亦不保证所有经本服务重定向之外部链接其内容之安全性与真实性。对于因使用本服务或重定向链接所产生的任何直接或间接损失，我们不承担任何赔偿责任。",
+    "updates_title": "5. 条款修改",
+    "updates_desc": "我们保留随时修改本服务条款之权利。修改后的条款一旦公布即生效。继续使用本服务即代表您接受修改后的条款。",
+    "contact_title": "6. 联络我们",
+    "contact_desc": "若您对本服务条款有任何疑问或发现任何违反条款的滥用行为，请与我们联络。"
+  },
+  "reports": {
+    "title": "滥用举报",
+    "description": "审查与管理举报的短网址",
+    "load_failed": "加载举报数据失败",
+    "empty": "目前没有举报记录",
+    "slug": "短网址代称 (Slug)",
+    "reason": "举报原因",
+    "reporter": "举报人",
+    "created_at": "举报时间",
+    "actions": "操作",
+    "keep_active": "保留链接启用",
+    "disable": "禁用链接",
+    "delete": "删除链接",
+    "action_success": "操作成功",
+    "action_failed": "操作失败"
   }
 }

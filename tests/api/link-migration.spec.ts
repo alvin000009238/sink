@@ -1,10 +1,11 @@
 import type { ImportResult } from '../../shared/schemas/import'
 import type { ExportData } from '../../shared/schemas/link'
 import { generateMock } from '@anatine/zod-mock'
+import { env } from 'cloudflare:test'
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { LINK_PASSWORD_HASH_PREFIX, LINK_PASSWORD_MASK_PREFIX } from '../../shared/utils/link-password'
-import { expectStoredHashedPassword, fetch, fetchWithAuth, getStoredLink, postJson } from '../utils'
+import { createTestSession, expectStoredHashedPassword, fetch, fetchWithAuth, getCachedLink, getStoredLink, postJson, postJsonWithToken } from '../utils'
 
 const linkSchema = z.object({
   url: z.string().url(),
@@ -178,5 +179,38 @@ describe.sequential('/api/link/import', () => {
   it('returns 401 when accessing without auth', async () => {
     const response = await postJson('/api/link/import', {}, false)
     expect(response.status).toBe(401)
+  })
+})
+
+describe.sequential('/api/admin/kv-migrate', () => {
+  it('migrates legacy KV link records into D1', async () => {
+    const slug = `kv-migrate-${crypto.randomUUID()}`
+    const password = 'legacy-secret123'
+    await env.KV.put(`legacy:${slug}`, JSON.stringify({
+      url: 'https://example.com/legacy',
+      slug,
+      password,
+    }))
+    await env.KV.put(`legacy:invalid-${slug}`, JSON.stringify({ nope: true }))
+
+    const response = await postJson('/api/admin/kv-migrate', {
+      prefix: 'legacy:',
+      limit: 10,
+    })
+    expect(response.status).toBe(200)
+
+    const data = await response.json() as { migrated: number, skipped: number, failed: number }
+    expect(data.migrated).toBeGreaterThanOrEqual(1)
+    expect(data.skipped).toBeGreaterThanOrEqual(1)
+    expect(data.failed).toBe(0)
+    expect(await getStoredLink(slug)).toEqual(expect.objectContaining({ slug }))
+    expect(await getCachedLink(slug)).toEqual(expect.objectContaining({ slug }))
+    await expectStoredHashedPassword(slug, password)
+  })
+
+  it('requires admin auth', async () => {
+    const token = await createTestSession(`kv-migrate-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`)
+    const response = await postJsonWithToken('/api/admin/kv-migrate', token, {})
+    expect(response.status).toBe(403)
   })
 })

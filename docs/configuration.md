@@ -20,7 +20,7 @@ Sets the default length of the generated SLUG.
 
 > If you are using Worker deployment, this variable needs to be configured in **Settings** -> **Build** -> **Variables and Secrets** and **Settings** -> **Variables and Secrets**.
 
-Sets the maximum number of KV operations per request for import/export. Default is 50 (Cloudflare Workers limit per request). Import operations use half of this value since each link requires 2 KV operations (check existence + write).
+Sets the import/export batch size. Default is 50. Import operations use half of this value to keep each request small.
 
 ## `NUXT_REDIRECT_STATUS_CODE`
 
@@ -86,14 +86,14 @@ Set the environment variable `NUXT_API_CORS=true` during build to enable CORS su
 
 ## `NUXT_DISABLE_AUTO_BACKUP`
 
-Set to `true` to disable the automatic daily KV backup to R2 storage. Default is `false`.
+Set to `true` to disable the automatic daily D1 link backup to R2 storage. Default is `false`.
 
 This feature requires:
 
-1. R2 bucket binding configured in `wrangler.jsonc`
+1. Uncomment the optional `R2` bucket binding in `wrangler.jsonc`.
 2. Create R2 bucket: `wrangler r2 bucket create sink`
 
-Backups are stored in R2 with the path `backups/links-{timestamp}.json` and run daily at 00:00 UTC.
+When R2 is not bound, automatic backups are skipped and manual backups return `503`. Backups are stored in R2 with the path `backups/links-{timestamp}.json` and run daily at 00:00 UTC.
 
 ## `NUXT_SAFE_BROWSING_DOH`
 

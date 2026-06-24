@@ -6,7 +6,7 @@ const route = useRoute()
 const localeHead = useLocaleHead()
 
 useSeoMeta({
-  title: `${title} - Link Shortener with Analytics`,
+  title: `${title} - 簡單、快速、安全的短網址服務`,
   description,
   ogType: 'website',
   ogTitle: title,
@@ -30,7 +30,7 @@ useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: computed(() => `https://sink.cool${route.path}`),
+      href: computed(() => `https://s.clhs.dev${route.path}`),
     },
     {
       rel: 'icon',

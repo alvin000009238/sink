@@ -4,11 +4,15 @@ import { expect } from 'vitest'
 import { LINK_PASSWORD_HASH_PREFIX, LINK_PASSWORD_MASK_PREFIX } from '../shared/utils/link-password'
 
 export function fetchWithAuth(path: string, options?: RequestInit): Promise<Response> {
+  return fetchWithToken(path, import.meta.env.NUXT_SITE_TOKEN, options)
+}
+
+export function fetchWithToken(path: string, token: string, options?: RequestInit): Promise<Response> {
   return SELF.fetch(`http://localhost${path}`, {
     ...options,
     headers: {
       ...options?.headers,
-      Authorization: `Bearer ${import.meta.env.NUXT_SITE_TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   })
 }
@@ -26,6 +30,14 @@ export function postJson(path: string, body: unknown, withAuth = true): Promise<
   })
 }
 
+export function postJsonWithToken(path: string, token: string, body: unknown): Promise<Response> {
+  return fetchWithToken(path, token, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
 export function putJson(path: string, body: unknown, withAuth = true): Promise<Response> {
   const fn = withAuth ? fetchWithAuth : fetch
   return fn(path, {
@@ -35,11 +47,71 @@ export function putJson(path: string, body: unknown, withAuth = true): Promise<R
   })
 }
 
+export function putJsonWithToken(path: string, token: string, body: unknown): Promise<Response> {
+  return fetchWithToken(path, token, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+async function hashTestSessionToken(token: string): Promise<string> {
+  const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token))
+  return [...new Uint8Array(bytes)].map(byte => byte.toString(16).padStart(2, '0')).join('')
+}
+
+export async function createTestSession(email: string, role: 'student' | 'admin' = 'student'): Promise<string> {
+  const now = Math.floor(Date.now() / 1000)
+  const token = `${crypto.randomUUID()}.${crypto.randomUUID()}`
+  const id = `test:${email}`
+
+  await env.DB.prepare(`
+    INSERT INTO students (id, email, name, role, status, created_at, updated_at)
+    VALUES (?, ?, ?, ?, 'active', ?, ?)
+    ON CONFLICT(email) DO UPDATE SET
+      role = excluded.role,
+      status = 'active',
+      updated_at = excluded.updated_at
+  `).bind(id, email, email, role, now, now).run()
+
+  await env.DB.prepare(`
+    INSERT INTO auth_sessions (token_hash, student_id, created_at, expires_at)
+    VALUES (?, ?, ?, ?)
+  `).bind(await hashTestSessionToken(token), id, now, now + 3600).run()
+
+  return token
+}
+
 export async function getStoredLink(slug: string) {
+  const row = await env.DB.prepare(`
+    SELECT payload_json
+    FROM links
+    WHERE slug = ?
+  `).bind(slug).first<{ payload_json: string }>()
+
+  return row ? JSON.parse(row.payload_json) as Link : null
+}
+
+export async function getStoredLinkOwner(slug: string) {
+  const row = await env.DB.prepare('SELECT owner_id FROM links WHERE slug = ?').bind(slug).first<{ owner_id: string }>()
+  return row?.owner_id ?? null
+}
+
+export async function getStoredLinkStatus(slug: string) {
+  const row = await env.DB.prepare('SELECT status FROM links WHERE slug = ?').bind(slug).first<{ status: string }>()
+  return row?.status ?? null
+}
+
+export async function getCachedLink(slug: string) {
   return await env.KV.get<Link>(`link:${slug}`, { type: 'json' })
 }
 
+export async function deleteCachedLink(slug: string) {
+  await env.KV.delete(`link:${slug}`)
+}
+
 export async function deleteStoredLink(slug: string) {
+  await env.DB.prepare('DELETE FROM links WHERE slug = ?').bind(slug).run()
   await env.KV.delete(`link:${slug}`)
 }
 

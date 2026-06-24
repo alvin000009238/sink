@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -121,6 +122,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  html[lang^='zh-TW'],
+  html[lang^='zh-tw'] {
+    font-family: 'Noto Sans TC', sans-serif;
+  }
 
   button:not(:disabled),
   [role='button']:not(:disabled),
@@ -144,5 +149,61 @@
   ::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 5px;
+  }
+
+  /* Coffee wiggle and steam animation */
+  @keyframes coffee-wiggle {
+    0%,
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+    15% {
+      transform: rotate(-18deg) scale(1.15);
+    }
+    30% {
+      transform: rotate(14deg) scale(1.15);
+    }
+    45% {
+      transform: rotate(-12deg) scale(1.1);
+    }
+    60% {
+      transform: rotate(8deg) scale(1.1);
+    }
+    75% {
+      transform: rotate(-4deg) scale(1.05);
+    }
+    90% {
+      transform: rotate(2deg) scale(1.02);
+    }
+  }
+
+  @keyframes coffee-steam {
+    0% {
+      transform: translateY(2px) translateX(0) scale(0.6);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.3;
+    }
+    40% {
+      transform: translateY(-6px) translateX(-2px) scale(1);
+      opacity: 0.6;
+    }
+    70% {
+      transform: translateY(-12px) translateX(2px) scale(0.9);
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateY(-18px) translateX(-1px) scale(0.7);
+      opacity: 0;
+    }
+  }
+
+  .animate-coffee-wiggle {
+    animation: coffee-wiggle 1s ease-in-out;
+  }
+
+  .animate-coffee-steam {
+    animation: coffee-steam 1.2s ease-in-out forwards;
   }
 }

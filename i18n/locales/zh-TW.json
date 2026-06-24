@@ -21,13 +21,19 @@
   },
   "login": {
     "title": "登入",
-    "description": "請輸入站點密碼以登入",
+    "description": "使用您的學校 Google 帳號登入",
     "tips": "提示",
     "preview_token": "預覽模式的站點密碼是",
     "submit": "登入",
     "failed": "登入失敗，請重試",
     "token_label": "站點密碼",
-    "token_required": "請輸入密碼"
+    "token_required": "請輸入密碼",
+    "or": "或",
+    "google_school": "使用學校 Google 帳號登入",
+    "admin_title": "管理員登入",
+    "admin_description": "請輸入站點密碼以登入管理員帳號",
+    "admin_login_link": "管理員登入",
+    "back_to_google": "返回 Google 登入"
   },
   "logout": {
     "title": "登出？",
@@ -36,7 +42,11 @@
   },
   "layouts": {
     "footer": {
-      "copyright": "產品來自 HTML.ZONE",
+      "copyright": "BST",
+      "privacy": "隱私權政策",
+      "terms": "服務條款",
+      "attribution": "本服務基於 {sink} 修改，原專案採 AGPL-3.0 授權。",
+      "source_code": "Source code: {repo}",
       "social": {
         "email": "信箱",
         "telegram": "Telegram",
@@ -55,7 +65,8 @@
     "analysis": "分析",
     "realtime": "即時",
     "check": "檢查",
-    "migrate": "匯入/匯出"
+    "migrate": "匯入/匯出",
+    "reports": "濫用檢舉"
   },
   "sidebar": {
     "subtitle": "縮網址服務",
@@ -136,14 +147,14 @@
       "follow": "在 X(Twitter) 上追蹤我"
     },
     "stats": {
-      "title": "有關 Sink 的數據",
-      "subtitle": "受到全球開發者信賴",
+      "title": "有關 clhs 短網址的數據",
+      "subtitle": "受到用戶信賴",
       "stars": "個 GitHub 星星",
       "forks": "次分叉"
     },
     "testimonials": {
       "title": "深受用戶喜愛",
-      "subtitle": "看看開發者們都怎麼描述 Sink"
+      "subtitle": "看看大家怎麼描述 clhs 短網址"
     }
   },
   "dashboard": {
@@ -286,8 +297,7 @@
       "newest": "最新",
       "oldest": "最舊",
       "az": "短連結(A-Z)",
-      "za": "短連結(Z-A)",
-      "tip": "體驗功能: 僅對已經加載的連結有效"
+      "za": "短連結(Z-A)"
     },
     "update_failed": "更新連結失敗",
     "create_failed": "創建連結失敗",
@@ -410,10 +420,71 @@
       },
       "errors": {
         "invalid_json": "無效的 JSON 檔案",
-        "invalid_format": "檔案格式無效，請使用從 Sink 匯出的檔案",
+        "invalid_format": "檔案格式無效，請使用從本服務匯出的檔案",
         "no_links": "檔案中找不到連結",
         "parse_error": "檔案解析失敗"
       }
     }
+  },
+  "privacy": {
+    "title": "隱私權政策",
+    "description": "clhs 短網址的隱私權政策，我們致力於保護您的個人資料安全。",
+    "last_updated": "最後更新日期：{date}",
+    "introduction_title": "1. 前言",
+    "introduction_desc": "本隱私權政策旨在說明 clhs 短網址（以下簡稱「本服務」、「我們」）如何收集、使用、儲存和保護您在使用本短網址服務時的資訊。我們非常重視您的隱私，並承諾依法保護您的個人資料。",
+    "data_collection_title": "2. 資訊的收集",
+    "data_collection_desc": "我們在您建立或存取短網址時，可能會收集以下資訊：",
+    "data_collection_item1": "縮網址資料：您提交的原始長網址與對應的短網址代碼（Slug）。請注意，若您在原始網址中包含個人資料，該資料亦會被儲存。",
+    "data_collection_item2": "分析日誌：當訪客點擊短網址時，系統會自動收集點擊事件，包含 IP 地址（用於分析地理位置）、瀏覽器類型（User-Agent）、引薦來源（Referer）以及點擊時間。",
+    "data_collection_item3": "工作階段與 Cookie：為了提供管理功能或學生登入，我們會使用必要的 Cookie 和工作階段儲存您的登入狀態。",
+    "data_use_title": "3. 資訊的使用",
+    "data_use_desc": "我們收集的資訊將用於以下用途：",
+    "data_use_item1": "提供、維持並優化我們的短網址重定向服務。",
+    "data_use_item2": "產生連結點擊統計數據與分析圖表（如地區、裝置分佈），以便連結建立者進行分析。",
+    "data_use_item3": "預防、偵測和打擊濫用行為（如惡意連結、詐騙網址），確保服務的安全性與合規性。",
+    "data_storage_title": "4. 資料儲存與共享",
+    "data_storage_desc": "您的資料安全地儲存在 Cloudflare 提供的無伺服器基礎建設中（包含 D1 資料庫、KV 快取與 R2 備份空間）。除非法律要求或為防範濫用，我們不會與任何第三方主動共享您的個人識別資料。",
+    "user_rights_title": "5. 您的權益",
+    "user_rights_desc": "您有權隨時在儀表板中刪除您所建立的短網址，這將會清除與該短網址關聯的所有重定向紀錄與分析數據。如果您對於您的資料有任何疑問，可以聯絡本服務的管理團隊。",
+    "policy_updates_title": "6. 政策更新",
+    "policy_updates_desc": "我們可能會不定期更新本隱私權政策。任何修改將在此頁面上發佈，並更新最下方的最後更新日期。建議您定期檢視本政策以獲取最新資訊。",
+    "contact_title": "7. 聯絡我們",
+    "contact_desc": "如果您對本隱私權政策有任何疑問、建議或投訴，請透過專案的 GitHub 倉庫或管理員信箱與我們聯絡。"
+  },
+  "terms": {
+    "title": "服務條款",
+    "description": "使用 clhs 短網址服務的條款與條件。",
+    "last_updated": "最後更新日期：{date}",
+    "introduction_title": "1. 服務接受",
+    "introduction_desc": "歡迎使用 clhs 短網址服務（以下簡稱「本服務」）。當您存取或使用本服務時，即表示您已閱讀、理解並同意受本服務條款所有內容之約束。若您不同意本條款，請立即停止使用本服務。",
+    "usage_title": "2. 使用規範",
+    "usage_desc": "在使用本服務時，您同意遵守以下規範，不得利用本服務進行任何非法、侵權或濫用行為：",
+    "usage_item1": "禁止建立指向包含病毒、惡意軟體、釣魚網站、詐騙內容或任何非法資訊之原始連結。",
+    "usage_item2": "禁止利用自動化程式或工具進行惡意的大量短網址註冊或進行拒絕服務攻擊 (DoS)。",
+    "usage_item3": "請妥善保管您的登入憑證或站點密碼，任何使用您帳號所建立之連結，其責任均由您承擔。",
+    "limitation_title": "3. 服務限制",
+    "limitation_desc": "本服務主要為學校及個人提供短網址功能。為了防止濫用，我們對短網址的每日建立上限、保留期限等設有一定限制。管理員有權在不另行通知的情況下，對涉嫌濫用、違法或過期的連結進行停用或刪除。",
+    "liability_title": "4. 免責聲明",
+    "liability_desc": "本服務依「現狀」及「現有」基礎提供。我們不保證服務絕對不會中斷、無錯誤，亦不保證所有經本服務重定向之外部連結其內容之安全性與真實性。對於因使用本服務或重定向連結所產生的任何直接或間接損失，我們不承擔任何賠償責任。",
+    "updates_title": "5. 條款修改",
+    "updates_desc": "我們保留隨時修改本服務條款之權利。修改後的條款一旦公佈即生效。繼續使用本服務即代表您接受修改後的條款。",
+    "contact_title": "6. 聯絡我們",
+    "contact_desc": "若您對本服務條款有任何疑問或發現任何違反條款的濫用行為，請與我們聯絡。"
+  },
+  "reports": {
+    "title": "濫用檢舉",
+    "description": "審查與管理檢舉的短網址",
+    "load_failed": "載入檢舉資料失敗",
+    "empty": "目前沒有檢舉記錄",
+    "slug": "短網址代稱 (Slug)",
+    "reason": "檢舉原因",
+    "reporter": "檢舉人",
+    "created_at": "檢舉時間",
+    "actions": "操作",
+    "keep_active": "保留連結啟用",
+    "disable": "停用連結",
+    "delete": "刪除連結",
+    "action_success": "操作成功",
+    "action_failed": "操作失敗"
   }
 }

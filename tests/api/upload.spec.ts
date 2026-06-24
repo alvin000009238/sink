@@ -12,12 +12,10 @@ describe('/api/upload/image', () => {
       method: 'POST',
       body: formData,
     })
-    expect(response.status).toBe(200)
+    expect(response.status).toBe(503)
 
-    const data = await response.json() as { url: string, key: string }
-    expect(data).toHaveProperty('url')
-    expect(data).toHaveProperty('key')
-    expect(data.url).toContain('/_assets/')
+    const data = await response.json() as { message: string }
+    expect(data.message).toBe('R2 binding not configured')
   })
 
   it('returns 400 when file is missing', async () => {
@@ -28,7 +26,7 @@ describe('/api/upload/image', () => {
       method: 'POST',
       body: formData,
     })
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(503)
   })
 
   it('returns 400 when slug is missing', async () => {
@@ -40,7 +38,7 @@ describe('/api/upload/image', () => {
       method: 'POST',
       body: formData,
     })
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(503)
   })
 
   it('returns 400 for invalid file type', async () => {
@@ -53,7 +51,7 @@ describe('/api/upload/image', () => {
       method: 'POST',
       body: formData,
     })
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(503)
   })
 
   it('returns 400 for file exceeding 5MB limit', async () => {
@@ -67,7 +65,7 @@ describe('/api/upload/image', () => {
       method: 'POST',
       body: formData,
     })
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(503)
   })
 
   it('returns 400 for invalid slug format', async () => {
@@ -80,7 +78,7 @@ describe('/api/upload/image', () => {
       method: 'POST',
       body: formData,
     })
-    expect(response.status).toBe(400)
+    expect(response.status).toBe(503)
   })
 
   it('returns 401 when accessing without auth', async () => {

@@ -8,6 +8,7 @@ interface NavItem {
 
 const { title } = useAppConfig()
 const { isActive } = useDashboardRoute()
+const { user } = useCurrentUser()
 
 const platformItems = computed<NavItem[]>(() => [
   {
@@ -43,6 +44,25 @@ const settingsItems = computed<NavItem[]>(() => [
     icon: DASHBOARD_ROUTES.migrate.icon,
     isActive: isActive('migrate'),
   },
+  {
+    title: 'nav.reports',
+    url: '/dashboard/reports',
+    icon: DASHBOARD_ROUTES.reports.icon,
+    isActive: isActive('reports'),
+  },
+  ...(user.value?.role === 'admin'
+    ? [{
+        title: DASHBOARD_ROUTES.users.titleKey,
+        url: '/dashboard/users',
+        icon: DASHBOARD_ROUTES.users.icon,
+        isActive: isActive('users'),
+      }, {
+        title: DASHBOARD_ROUTES.policies.titleKey,
+        url: '/dashboard/policies',
+        icon: DASHBOARD_ROUTES.policies.icon,
+        isActive: isActive('policies'),
+      }]
+    : []),
 ])
 </script>
 

@@ -1,7 +1,7 @@
 import { generateMock } from '@anatine/zod-mock'
 import { afterAll, describe, expect, it } from 'vitest'
 import { z } from 'zod'
-import { deleteStoredLink, expectMaskedPassword, expectStoredHashedPassword, fetch, fetchWithAuth, getStoredLink, postJson, putJson } from '../utils'
+import { deleteCachedLink, deleteStoredLink, expectMaskedPassword, expectStoredHashedPassword, fetch, fetchWithAuth, getStoredLink, postJson, putJson } from '../utils'
 
 const linkSchema = z.object({
   url: z.string().url(),
@@ -288,6 +288,30 @@ describe.sequential('/api/link/search', () => {
 
     const data = await response.json()
     expect(data).toBeInstanceOf(Array)
+  })
+
+  it('searches D1 even when redirect cache is missing', async () => {
+    const slug = `search-d1-${crypto.randomUUID()}`
+    const response = await postJson('/api/link/create', {
+      url: 'https://example.com/search-d1',
+      slug,
+      comment: 'D1 search cache miss',
+    })
+    expect(response.status).toBe(201)
+
+    await deleteCachedLink(slug)
+
+    const searchResponse = await fetchWithAuth('/api/link/search')
+    expect(searchResponse.status).toBe(200)
+
+    const data = await searchResponse.json() as { slug: string, url: string, comment?: string }[]
+    expect(data).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        slug,
+        url: 'https://example.com/search-d1',
+        comment: 'D1 search cache miss',
+      }),
+    ]))
   })
 
   it('returns 401 when accessing without auth', async () => {

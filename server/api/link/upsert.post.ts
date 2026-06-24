@@ -38,9 +38,23 @@ export default eventHandler(async (event) => {
 
   const existingLink = await getLink(event, link.slug)
   if (existingLink) {
-    return { ...buildLinkResponse(event, existingLink), status: 'existing' }
+    const accessibleLink = await getLink(event, link.slug, undefined, true)
+    if (accessibleLink)
+      return { ...buildLinkResponse(event, accessibleLink), status: 'existing' }
+
+    throw createError({
+      status: 409,
+      statusText: 'Link already exists',
+    })
+  }
+  if (await linkSlugExists(event, link.slug)) {
+    throw createError({
+      status: 409,
+      statusText: 'Link already exists',
+    })
   }
 
+  await enforceLinkCreatePolicy(event, link.slug)
   await hashLinkPasswordForCreate(link)
 
   await putLink(event, link)

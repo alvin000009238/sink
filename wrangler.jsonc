@@ -38,6 +38,21 @@
       "id": "35f21c9cbfaf4043a0afd77b3b0d03bc"
     }
   ],
+  // Optional. Enable only when image uploads or R2 backups are needed.
+  // "r2_buckets": [
+  //   {
+  //     "binding": "R2",
+  //     "bucket_name": "sink"
+  //   }
+  // ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "clhs_sink_d1",
+      "database_id": "3b0b33ed-43a7-4a18-82c1-17ce4581eff0",
+      "migrations_dir": "migrations"
+    }
+  ],
   "triggers": {
     "crons": ["0 0 * * *"] // Run backup task daily at 00:00 UTC
   }

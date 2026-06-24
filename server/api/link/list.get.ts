@@ -19,6 +19,34 @@ defineRouteMeta({
         schema: { type: 'string' },
         description: 'Pagination cursor from previous response',
       },
+      {
+        name: 'domain',
+        in: 'query',
+        required: false,
+        schema: { type: 'string' },
+        description: 'Filter links by destination hostname',
+      },
+      {
+        name: 'creator',
+        in: 'query',
+        required: false,
+        schema: { type: 'string' },
+        description: 'Filter links by creator id or email',
+      },
+      {
+        name: 'purpose',
+        in: 'query',
+        required: false,
+        schema: { type: 'string' },
+        description: 'Filter links by purpose',
+      },
+      {
+        name: 'order',
+        in: 'query',
+        required: false,
+        schema: { type: 'string', enum: ['asc', 'desc'], default: 'desc' },
+        description: 'Sort links by creation time',
+      },
     ],
   },
 })
@@ -26,12 +54,17 @@ defineRouteMeta({
 const ListQuerySchema = z.object({
   limit: z.coerce.number().max(1024).default(20),
   cursor: z.string().trim().max(1024).optional(),
+  creator: z.string().trim().max(320).optional(),
+  domain: z.string().trim().toLowerCase().max(253).optional(),
+  order: z.enum(['asc', 'desc']).default('desc'),
+  owner: z.string().trim().max(320).optional(),
+  purpose: z.string().trim().max(2048).optional(),
 })
 
 export default eventHandler(async (event) => {
-  const { limit, cursor } = await getValidatedQuery(event, ListQuerySchema.parse)
+  const { creator, cursor, domain, limit, order, owner, purpose } = await getValidatedQuery(event, ListQuerySchema.parse)
 
-  const list = await listLinks(event, { limit, cursor })
+  const list = await listLinks(event, { creator, cursor, domain, limit, order, owner, purpose })
   return {
     ...list,
     links: sanitizeLinksPassword(list.links),

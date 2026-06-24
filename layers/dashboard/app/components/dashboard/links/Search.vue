@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FuseResult } from 'fuse.js'
 import type { LinkSearchItem } from '@/types'
 import { createReusableTemplate, useMagicKeys, useMediaQuery } from '@vueuse/core'
 import { useFuse } from '@vueuse/integrations/useFuse'
@@ -25,6 +26,7 @@ const { results: filteredLinks } = useFuse(searchTerm, links, {
   },
   resultLimit: 20,
 })
+const filteredLinkResults = computed(() => filteredLinks.value as FuseResult<LinkSearchItem>[])
 
 const { Meta_K, Ctrl_K } = useMagicKeys({
   passive: false,
@@ -114,11 +116,11 @@ onMounted(() => {
         <CommandEmpty>
           {{ $t('links.no_results') }}
         </CommandEmpty>
-        <CommandGroup v-if="filteredLinks.length" :heading="$t('links.group_title')">
+        <CommandGroup v-if="filteredLinkResults.length" :heading="$t('links.group_title')">
           <CommandItem
-            v-for="link in filteredLinks" :key="link.item.slug" class="
+            v-for="link in filteredLinkResults" :key="link.item.slug" class="
               cursor-pointer
-            " :value="link.item" @select="selectLink(link.item)"
+            " :value="link.item.slug" @select="selectLink(link.item)"
           >
             <div class="flex w-full gap-1">
               <div class="inline-flex flex-1 items-center gap-1 overflow-hidden">

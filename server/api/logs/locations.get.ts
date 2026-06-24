@@ -16,7 +16,7 @@ function query2sql(query: Query, event: H3Event): string {
 }
 
 export default eventHandler(async (event) => {
-  const query = await getValidatedQuery(event, QuerySchema.parse)
+  const query = await scopeQueryToOwnedLinks(event, await getValidatedQuery(event, QuerySchema.parse))
   const sql = query2sql(query, event)
 
   return useWAE(event, sql)

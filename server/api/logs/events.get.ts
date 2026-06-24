@@ -37,7 +37,7 @@ function events2logs(events: WAEEvents[]) {
 }
 
 export default eventHandler(async (event) => {
-  const query = await getValidatedQuery(event, QuerySchema.parse)
+  const query = await scopeQueryToOwnedLinks(event, await getValidatedQuery(event, QuerySchema.parse))
   const sql = query2sql(query, event)
 
   const logs = await useWAE(event, sql) as { data: WAEEvents[] }

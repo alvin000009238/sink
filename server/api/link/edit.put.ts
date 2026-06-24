@@ -49,7 +49,7 @@ export default eventHandler(async (event) => {
   }
   const link = await readValidatedBody(event, EditLinkSchema.parse)
 
-  const existingLink: z.infer<typeof LinkSchema> | null = await getLink(event, link.slug)
+  const existingLink: z.infer<typeof LinkSchema> | null = await getLink(event, link.slug, undefined, true)
   if (!existingLink) {
     throw createError({
       status: 404,

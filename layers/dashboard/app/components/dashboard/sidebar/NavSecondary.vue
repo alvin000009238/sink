@@ -2,11 +2,21 @@
 import { ArrowUpCircle, Coffee, Languages, Laptop, Moon, Sun } from 'lucide-vue-next'
 import { useSidebar } from '@/components/ui/sidebar'
 
-const { coffee } = useAppConfig()
 const colorMode = useColorMode()
 const { setLocale, locales } = useI18n()
 const { state } = useSidebar()
 const { hasUpdate, currentVersion, latestVersion } = useVersionCheck()
+
+const isAnimating = ref(false)
+
+function playAnimation() {
+  if (isAnimating.value)
+    return
+  isAnimating.value = true
+  setTimeout(() => {
+    isAnimating.value = false
+  }, 1500)
+}
 </script>
 
 <template>
@@ -22,27 +32,49 @@ const { hasUpdate, currentVersion, latestVersion } = useVersionCheck()
             ]"
           >
             <div class="flex items-center">
-              <TooltipProvider>
-                <Tooltip :delay-duration="100">
-                  <TooltipTrigger as-child>
-                    <a
-                      :href="coffee"
-                      target="_blank"
-                      :title="$t('sidebar.coffee')"
-                      class="
-                        flex h-8 items-center justify-center rounded-md px-2
-                        hover:bg-sidebar-accent
-                        hover:text-sidebar-accent-foreground
-                      "
-                    >
-                      <Coffee class="size-4" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent :side="state === 'collapsed' ? 'right' : 'top'">
-                    <p>{{ $t('sidebar.coffee') }}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <button
+                class="
+                  relative flex h-8 items-center justify-center rounded-md px-2
+                  hover:bg-sidebar-accent hover:text-sidebar-accent-foreground
+                  focus-visible:outline-none
+                "
+                @click="playAnimation"
+              >
+                <div
+                  v-if="isAnimating" class="
+                    pointer-events-none absolute -top-3.5 left-1/2 flex
+                    -translate-x-1/2 justify-center gap-0.5
+                  "
+                >
+                  <svg
+                    class="
+                      animate-coffee-steam h-3.5 w-1.5 text-zinc-500/70
+                      dark:text-white/70
+                    " viewBox="0 0 10 30" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 25C2 20 8 15 5 10C2 5 8 0 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                  <svg
+                    class="
+                      animate-coffee-steam h-3.5 w-1.5 text-zinc-500/70
+                      [animation-delay:0.15s]
+                      dark:text-white/70
+                    " viewBox="0 0 10 30" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 25C8 20 2 15 5 10C8 5 2 0 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                  <svg
+                    class="
+                      animate-coffee-steam h-3.5 w-1.5 text-zinc-500/70
+                      [animation-delay:0.3s]
+                      dark:text-white/70
+                    " viewBox="0 0 10 30" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M5 25C3 20 7 15 5 10C3 5 7 0 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <Coffee class="size-4" :class="{ 'animate-coffee-wiggle': isAnimating }" />
+              </button>
 
               <TooltipProvider v-if="hasUpdate">
                 <Tooltip :delay-duration="100">

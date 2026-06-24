@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { formatNumber } from '@/utils/number'
 
 export function useGithubStats() {
-  const { github } = useAppConfig()
+  const { github } = useAppConfig() as { github?: string }
   const { locale } = useI18n()
-  const repo = github.replace('https://github.com/', '')
+  const repo = github?.replace('https://github.com/', '') || ''
 
   const { data, status } = useFetch(
     `https://api.github.com/repos/${repo}`,
@@ -14,6 +14,7 @@ export function useGithubStats() {
       server: false,
       lazy: true,
       dedupe: 'defer',
+      immediate: !!repo,
       transform: (res: { stargazers_count: number, forks_count: number }) => ({
         stars: res.stargazers_count,
         forks: res.forks_count,

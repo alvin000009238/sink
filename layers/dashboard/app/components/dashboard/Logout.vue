@@ -2,9 +2,11 @@
 import { LogOut } from 'lucide-vue-next'
 
 const { removeToken } = useAuthToken()
+const { logout } = useCurrentUser()
 
-function logOut() {
+async function logOut() {
   removeToken()
+  await logout()
   navigateTo('/dashboard/login')
 }
 </script>

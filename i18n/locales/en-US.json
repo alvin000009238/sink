@@ -21,13 +21,19 @@
   },
   "login": {
     "title": "Login",
-    "description": "Enter your site token to login",
+    "description": "Login with your school Google account",
     "tips": "Tips",
     "preview_token": "The site token for preview mode is",
     "submit": "Login",
     "failed": "Login failed, please try again",
     "token_label": "Site Token",
-    "token_required": "Token is required"
+    "token_required": "Token is required",
+    "or": "or",
+    "google_school": "Login with school Google account",
+    "admin_title": "Admin Login",
+    "admin_description": "Enter your site token to login as administrator",
+    "admin_login_link": "Admin Login",
+    "back_to_google": "Back to Google Login"
   },
   "logout": {
     "title": "LogOut?",
@@ -36,7 +42,11 @@
   },
   "layouts": {
     "footer": {
-      "copyright": "Products of HTML.ZONE",
+      "copyright": "BST",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "attribution": "This service is modified based on {sink}, licensed under AGPL-3.0.",
+      "source_code": "Source code: {repo}",
       "social": {
         "email": "Email",
         "telegram": "Telegram",
@@ -55,7 +65,8 @@
     "analysis": "Analysis",
     "realtime": "Realtime",
     "check": "Check",
-    "migrate": "Import/Export"
+    "migrate": "Import/Export",
+    "reports": "Abuse Reports"
   },
   "sidebar": {
     "subtitle": "Link Shortener",
@@ -136,14 +147,14 @@
       "follow": "Follow on X(Twitter)"
     },
     "stats": {
-      "title": "Sink in Numbers",
-      "subtitle": "Trusted by developers around the world",
+      "title": "CLHS Link Shortener in Numbers",
+      "subtitle": "Trusted by users",
       "stars": "Stars on GitHub",
       "forks": "Forks"
     },
     "testimonials": {
       "title": "Loved by Users",
-      "subtitle": "See what developers are saying about Sink"
+      "subtitle": "See what people are saying about CLHS Link Shortener"
     }
   },
   "dashboard": {
@@ -286,8 +297,7 @@
       "newest": "Newest First",
       "oldest": "Oldest First",
       "az": "Slug A-Z",
-      "za": "Slug Z-A",
-      "tip": "Experience: Only for loaded links"
+      "za": "Slug Z-A"
     },
     "update_failed": "Failed to update link",
     "create_failed": "Failed to create link",
@@ -410,10 +420,71 @@
       },
       "errors": {
         "invalid_json": "Invalid JSON file",
-        "invalid_format": "Invalid file format. Please use a file exported from Sink.",
+        "invalid_format": "Invalid file format. Please use a file exported from this service.",
         "no_links": "No links found in file",
         "parse_error": "Failed to parse file"
       }
     }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "Privacy policy for CLHS Link Shortener. We commit to protecting your personal data and privacy.",
+    "last_updated": "Last updated: {date}",
+    "introduction_title": "1. Introduction",
+    "introduction_desc": "This Privacy Policy explains how CLHS Link Shortener (\"we\", \"us\", \"our\", or \"the service\") collects, uses, stores, and protects your information when you use our link shortening service. We respect your privacy and are committed to protecting your personal data in accordance with applicable laws.",
+    "data_collection_title": "2. Information Collection",
+    "data_collection_desc": "We may collect the following information when you create or access shortened links:",
+    "data_collection_item1": "Shortened Link Data: The original destination URL and the corresponding shortened slug you submit. Please note that if the original URL contains personal information, it will also be stored.",
+    "data_collection_item2": "Visitor Analytics: When a visitor clicks a shortened link, the system automatically records the event. This includes IP address (used to parse geographic location), browser type (User-Agent), referer header, and timestamp.",
+    "data_collection_item3": "Sessions and Cookies: To provide admin functions or student OAuth sessions, we use necessary cookies and session storage to maintain your login state.",
+    "data_use_title": "3. Use of Information",
+    "data_use_desc": "The collected information is used for the following purposes:",
+    "data_use_item1": "To provide, maintain, and optimize our link shortening and redirection service.",
+    "data_use_item2": "To generate click statistics and analytics (e.g. device types, location distribution) for link owners.",
+    "data_use_item3": "To prevent, detect, and mitigate abuse (such as malicious links or phishing attempts), ensuring safety and compliance.",
+    "data_storage_title": "4. Data Storage and Sharing",
+    "data_storage_desc": "Your data is securely stored within Cloudflare serverless infrastructure (including D1 database, KV cache, and R2 backup storage). We do not share your personally identifiable information with third parties unless required by law or to prevent abuse.",
+    "user_rights_title": "5. Your Rights",
+    "user_rights_desc": "You can delete your shortened links at any time via the dashboard. Deleting a link will permanently remove all associated redirection configurations and visitor analytics data. If you have questions regarding your data, please contact our administration team.",
+    "policy_updates_title": "6. Policy Updates",
+    "policy_updates_desc": "We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated \"last updated\" date. We recommend checking this policy regularly to stay informed.",
+    "contact_title": "7. Contact Us",
+    "contact_desc": "If you have any questions, suggestions, or complaints about this Privacy Policy, please contact us via our GitHub repository or administrator email."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "description": "Terms and conditions for using the clhs short link service.",
+    "last_updated": "Last updated: {date}",
+    "introduction_title": "1. Acceptance of Terms",
+    "introduction_desc": "Welcome to clhs short link service (referred to as \"the Service\"). By accessing or using the Service, you agree to be bound by these Terms of Service. If you do not agree, please stop using the Service immediately.",
+    "usage_title": "2. User Conduct",
+    "usage_desc": "You agree not to use the Service for any illegal, infringing, or abusive activities, including but not limited to:",
+    "usage_item1": "Do not create links pointing to viruses, malware, phishing sites, fraudulent content, or any illegal material.",
+    "usage_item2": "Do not use automated bots or tools for malicious bulk registration or Denial of Service (DoS) attacks.",
+    "usage_item3": "You are responsible for keeping your login credentials or site token secure, and for all activities under your account.",
+    "limitation_title": "3. Service Limitations",
+    "limitation_desc": "The Service is primarily provided for schools and individual use. Daily limits and expiration settings apply. Administrators reserve the right to disable or delete links that violate policies, contain illegal content, or are deemed expired, without prior notice.",
+    "liability_title": "4. Disclaimer of Warranties",
+    "liability_desc": "The Service is provided on an \"AS IS\" and \"AS AVAILABLE\" basis. We do not warrant that the Service will be uninterrupted or error-free, nor do we guarantee the safety or accuracy of the destination URLs. We are not liable for any direct or indirect damages arising from the use of the Service.",
+    "updates_title": "5. Modifications of Terms",
+    "updates_desc": "We reserve the right to modify these terms at any time. Changes become effective once posted. Continued use of the Service constitutes acceptance of the modified terms.",
+    "contact_title": "6. Contact Us",
+    "contact_desc": "If you have any questions about these terms or wish to report any abuse, please contact us."
+  },
+  "reports": {
+    "title": "Abuse Reports",
+    "description": "Review and manage link abuse reports",
+    "load_failed": "Failed to load reports",
+    "empty": "No abuse reports found",
+    "slug": "Slug",
+    "reason": "Reason",
+    "reporter": "Reporter",
+    "created_at": "Reported At",
+    "actions": "Actions",
+    "keep_active": "Keep Link Active",
+    "disable": "Disable Link",
+    "delete": "Delete Link",
+    "action_success": "Action completed successfully",
+    "action_failed": "Action failed"
   }
 }
