@@ -152,6 +152,7 @@ D1 migrations live in `migrations/`. Run `pnpm gen:types` after changing `wrangl
 - Site token auth still works as the system admin. Student sessions are stored in D1 `auth_sessions` and may also be sent as the `SinkSession` cookie.
 - Student link and analytics APIs must filter by `links.owner_id`; admins can see and moderate all links.
 - Students can submit reports through `/api/link/report` and read their own report history through `/api/link/reports`; admins review all reports through `/api/admin/reports`.
+- Anonymous homepage reports use `/api/link/anonymous-report`, accept a short-link URL or slug, and require Cloudflare Turnstile. Configure `NUXT_PUBLIC_TURNSTILE_SITE_KEY` for the widget and `NUXT_TURNSTILE_SECRET_KEY` for server-side siteverify. Tests can enable `NUXT_TEST_MOCK_TURNSTILE=true` and submit `test-turnstile-token`.
 - Admins manage OAuth users through `/api/admin/users` and `/api/admin/user-status`. Disabled users cannot use existing sessions because session lookup only accepts active students.
 - `/api/link/list` supports `domain`, `creator`/`owner`, `purpose`, and `order` filters. `purpose` currently reuses the link comment value.
 - Admins can migrate legacy KV JSON link records into D1 through `/api/admin/kv-migrate`; use `prefix`, `cursor`, and `limit` to run it in batches.

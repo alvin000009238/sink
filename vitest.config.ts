@@ -11,7 +11,9 @@ export default defineWorkersConfig(({ mode }) => {
         ...env,
         NUXT_SITE_TOKEN: siteToken,
         NUXT_GOOGLE_OAUTH_CLIENT_ID: env.NUXT_GOOGLE_OAUTH_CLIENT_ID || 'test-google-client',
+        NUXT_PUBLIC_TURNSTILE_SITE_KEY: env.NUXT_PUBLIC_TURNSTILE_SITE_KEY || 'test-turnstile-site-key',
         NUXT_TEST_MOCK_WAE: 'true',
+        NUXT_TEST_MOCK_TURNSTILE: 'true',
       },
       setupFiles: ['./tests/setup.ts'],
       poolOptions: {
@@ -26,7 +28,9 @@ export default defineWorkersConfig(({ mode }) => {
             bindings: {
               NUXT_SITE_TOKEN: siteToken,
               NUXT_GOOGLE_OAUTH_CLIENT_ID: env.NUXT_GOOGLE_OAUTH_CLIENT_ID || 'test-google-client',
+              NUXT_PUBLIC_TURNSTILE_SITE_KEY: env.NUXT_PUBLIC_TURNSTILE_SITE_KEY || 'test-turnstile-site-key',
               NUXT_TEST_MOCK_WAE: 'true',
+              NUXT_TEST_MOCK_TURNSTILE: 'true',
             },
           },
         },

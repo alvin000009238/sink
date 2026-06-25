@@ -5,6 +5,8 @@ const CONFIG_MAPPING: Record<string, string> = {
   googleOAuthClientSecret: 'NUXT_GOOGLE_OAUTH_CLIENT_SECRET',
   googleOAuthRedirectUrl: 'NUXT_GOOGLE_OAUTH_REDIRECT_URL',
   googleOAuthHostedDomain: 'NUXT_GOOGLE_OAUTH_HOSTED_DOMAIN',
+  turnstileSecretKey: 'NUXT_TURNSTILE_SECRET_KEY',
+  testMockTurnstile: 'NUXT_TEST_MOCK_TURNSTILE',
   cfAccountId: 'NUXT_CF_ACCOUNT_ID',
   cfApiToken: 'NUXT_CF_API_TOKEN',
   siteToken: 'NUXT_SITE_TOKEN',

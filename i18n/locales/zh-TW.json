@@ -155,6 +155,21 @@
     "testimonials": {
       "title": "深受用戶喜愛",
       "subtitle": "看看大家怎麼描述 clhs 短網址"
+    },
+    "report": {
+      "badge": "檢舉連結",
+      "title": "匿名檢舉濫用連結",
+      "description": "貼上短網址或 slug，送交管理員審查。",
+      "success_inline": "檢舉已送出。",
+      "target_placeholder": "https://s.clhs.dev/example",
+      "reason_placeholder": "檢舉原因",
+      "details_placeholder": "補充說明",
+      "turnstile_missing_title": "Turnstile 尚未設定",
+      "turnstile_missing_description": "匿名檢舉目前暫時無法使用。",
+      "verify_required": "請先完成驗證。",
+      "submit_success": "檢舉已送出",
+      "submit_failed": "檢舉送出失敗",
+      "submit": "送出"
     }
   },
   "dashboard": {
@@ -485,6 +500,24 @@
     "disable": "停用連結",
     "delete": "刪除連結",
     "action_success": "操作成功",
-    "action_failed": "操作失敗"
+    "action_failed": "操作失敗",
+    "student_title": "檢舉紀錄",
+    "student_description": "送出檢舉並查看你的檢舉紀錄。",
+    "submit_title": "送出檢舉",
+    "submit_description": "檢舉一個有效的短連結，交由管理員審查。",
+    "student_empty": "目前沒有檢舉紀錄。",
+    "target_placeholder": "短網址或 slug",
+    "details": "補充說明",
+    "status_label": "狀態",
+    "refresh": "重新整理",
+    "submit": "送出",
+    "submit_success": "檢舉已送出",
+    "submit_failed": "檢舉送出失敗",
+    "status": {
+      "open": "待審核",
+      "reviewing": "審核中",
+      "resolved": "已處理",
+      "rejected": "已駁回"
+    }
   }
 }

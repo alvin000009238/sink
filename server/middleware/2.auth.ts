@@ -1,5 +1,5 @@
 export default eventHandler(async (event) => {
-  if (!event.path.startsWith('/api/') || event.path.startsWith('/api/auth/'))
+  if (!event.path.startsWith('/api/') || event.path.startsWith('/api/auth/') || event.path === '/api/link/anonymous-report' || event.path === '/api/public-config')
     return
 
   const authHeader = getHeader(event, 'Authorization')

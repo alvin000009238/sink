@@ -14,7 +14,7 @@ describe.sequential('reports and admin moderation', () => {
     expect(await getCachedLink(slug)).not.toBeNull()
 
     expect((await postJsonWithToken('/api/link/report', reporterToken, {
-      slug,
+      slug: `https://s.clhs.dev/${slug}`,
       reason: 'unsafe',
       details: 'Looks suspicious',
     })).status).toBe(201)
@@ -66,5 +66,44 @@ describe.sequential('reports and admin moderation', () => {
     ]))
     expect(await getStoredLinkStatus(slug)).toBe('disabled')
     expect(await getCachedLink(slug)).toBeNull()
+  })
+
+  it('lets anonymous users report links with Turnstile', async () => {
+    const ownerToken = await createTestSession(`anonymous-owner-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`)
+    const slug = `anonymous-report-${crypto.randomUUID()}`
+
+    expect((await postJsonWithToken('/api/link/create', ownerToken, {
+      url: 'https://example.com/anonymous-report-target',
+      slug,
+    })).status).toBe(201)
+
+    expect((await postJson('/api/link/anonymous-report', {
+      slug: `https://s.clhs.dev/${slug}`,
+      reason: 'abuse',
+    }, false)).status).toBe(400)
+
+    expect((await postJson('/api/link/anonymous-report', {
+      slug,
+      reason: 'abuse',
+      turnstileToken: 'wrong-token',
+    }, false)).status).toBe(403)
+
+    expect((await postJson('/api/link/anonymous-report', {
+      slug: `https://s.clhs.dev/${slug}`,
+      reason: 'abuse',
+      details: 'Anonymous report',
+      turnstileToken: 'test-turnstile-token',
+    }, false)).status).toBe(201)
+
+    const reportsResponse = await fetchWithAuth('/api/admin/reports?status=open')
+    expect(reportsResponse.status).toBe(200)
+    const reports = await reportsResponse.json() as { slug: string, reason: string, reporter_email: string | null }[]
+    expect(reports).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        slug,
+        reason: 'abuse',
+        reporter_email: null,
+      }),
+    ]))
   })
 })

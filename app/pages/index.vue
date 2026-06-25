@@ -3,6 +3,7 @@
     <HomeHero />
     <HomeLogos />
     <HomeFeatures />
+    <HomeReport />
     <HomeCta />
   </div>
 </template>

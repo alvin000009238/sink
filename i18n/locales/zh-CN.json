@@ -155,6 +155,21 @@
     "testimonials": {
       "title": "用户好评",
       "subtitle": "看看大家怎么描述 clhs 短网址"
+    },
+    "report": {
+      "badge": "举报链接",
+      "title": "匿名举报滥用链接",
+      "description": "粘贴短网址或 slug，提交给管理员审核。",
+      "success_inline": "举报已提交。",
+      "target_placeholder": "https://s.clhs.dev/example",
+      "reason_placeholder": "举报原因",
+      "details_placeholder": "补充说明",
+      "turnstile_missing_title": "Turnstile 尚未配置",
+      "turnstile_missing_description": "匿名举报目前暂时无法使用。",
+      "verify_required": "请先完成验证。",
+      "submit_success": "举报已提交",
+      "submit_failed": "举报提交失败",
+      "submit": "提交"
     }
   },
   "dashboard": {
@@ -485,6 +500,24 @@
     "disable": "禁用链接",
     "delete": "删除链接",
     "action_success": "操作成功",
-    "action_failed": "操作失败"
+    "action_failed": "操作失败",
+    "student_title": "举报记录",
+    "student_description": "提交举报并查看你的举报记录。",
+    "submit_title": "提交举报",
+    "submit_description": "举报一个有效的短链接，交由管理员审核。",
+    "student_empty": "目前没有举报记录。",
+    "target_placeholder": "短网址或 slug",
+    "details": "补充说明",
+    "status_label": "状态",
+    "refresh": "刷新",
+    "submit": "提交",
+    "submit_success": "举报已提交",
+    "submit_failed": "举报提交失败",
+    "status": {
+      "open": "待审核",
+      "reviewing": "审核中",
+      "resolved": "已处理",
+      "rejected": "已驳回"
+    }
   }
 }

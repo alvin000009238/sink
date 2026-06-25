@@ -24,6 +24,10 @@ const details = ref('')
 
 const isAdmin = computed(() => user.value?.role === 'admin')
 
+function reportStatusLabel(status: LinkReport['status']) {
+  return t(`reports.status.${status}`)
+}
+
 async function loadReports() {
   loading.value = true
   error.value = ''
@@ -61,11 +65,11 @@ async function submitReport() {
     reason.value = ''
     details.value = ''
     await loadReports()
-    toast.success('Report submitted')
+    toast.success(t('reports.submit_success'))
   }
   catch (e) {
     console.error(e)
-    toast.error('Failed to submit report', {
+    toast.error(t('reports.submit_failed'), {
       description: e instanceof Error ? e.message : String(e),
     })
   }
@@ -110,23 +114,23 @@ onMounted(loadReports)
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h1 class="text-2xl font-semibold">
-          {{ isAdmin ? $t('reports.title') : 'Reports' }}
+          {{ isAdmin ? $t('reports.title') : $t('reports.student_title') }}
         </h1>
         <p class="text-sm text-muted-foreground">
-          {{ isAdmin ? $t('reports.description') : 'Submit reports and review your report history.' }}
+          {{ isAdmin ? $t('reports.description') : $t('reports.student_description') }}
         </p>
       </div>
       <Button variant="outline" :disabled="loading" aria-label="Refresh reports" @click="loadReports">
         <Loader v-if="loading" class="h-4 w-4 animate-spin" />
         <RefreshCw v-else class="h-4 w-4" />
-        Refresh
+        {{ $t('reports.refresh') }}
       </Button>
     </div>
 
     <Card v-if="!isAdmin">
       <CardHeader>
-        <CardTitle>Submit Report</CardTitle>
-        <CardDescription>Report an active short link for admin review.</CardDescription>
+        <CardTitle>{{ $t('reports.submit_title') }}</CardTitle>
+        <CardDescription>{{ $t('reports.submit_description') }}</CardDescription>
       </CardHeader>
       <CardContent class="space-y-3">
         <div
@@ -135,15 +139,15 @@ onMounted(loadReports)
             md:grid-cols-[220px_1fr]
           "
         >
-          <Input v-model="slug" placeholder="slug" aria-label="Reported slug" @keydown.enter="submitReport" />
-          <Input v-model="reason" placeholder="Reason" aria-label="Report reason" @keydown.enter="submitReport" />
+          <Input v-model="slug" :placeholder="$t('reports.target_placeholder')" aria-label="Reported short link" @keydown.enter="submitReport" />
+          <Input v-model="reason" :placeholder="$t('reports.reason')" aria-label="Report reason" @keydown.enter="submitReport" />
         </div>
-        <Textarea v-model="details" placeholder="Details" aria-label="Report details" />
+        <Textarea v-model="details" :placeholder="$t('reports.details')" aria-label="Report details" />
         <div class="flex justify-end">
           <Button :disabled="!slug.trim() || !reason.trim() || !!actionId" @click="submitReport">
             <Loader v-if="actionId === 'submit'" class="h-4 w-4 animate-spin" />
             <Send v-else class="h-4 w-4" />
-            Submit
+            {{ $t('reports.submit') }}
           </Button>
         </div>
       </CardContent>
@@ -160,7 +164,7 @@ onMounted(loadReports)
 
     <Card v-else-if="!reports.length">
       <CardContent class="py-10 text-center text-sm text-muted-foreground">
-        {{ isAdmin ? $t('reports.empty') : 'No reports found.' }}
+        {{ isAdmin ? $t('reports.empty') : $t('reports.student_empty') }}
       </CardContent>
     </Card>
 
@@ -179,7 +183,7 @@ onMounted(loadReports)
                 {{ $t('reports.reporter') }}
               </th>
               <th v-else class="px-4 py-3 font-medium">
-                Status
+                {{ $t('reports.status_label') }}
               </th>
               <th class="px-4 py-3 font-medium">
                 {{ $t('reports.created_at') }}
@@ -211,7 +215,7 @@ onMounted(loadReports)
               </td>
               <td v-else class="px-4 py-3">
                 <Badge variant="secondary">
-                  {{ report.status }}
+                  {{ reportStatusLabel(report.status) }}
                 </Badge>
               </td>
               <td class="px-4 py-3 text-muted-foreground">

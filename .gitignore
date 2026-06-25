@@ -30,6 +30,7 @@ public/world.json
 .kiro/steering/locale.md
 
 .claude
+.codex/
 .opencode
 .agents
 opencode.json

@@ -140,6 +140,21 @@
       "description": "With just a few simple clicks, you can start deploying without any expenses",
       "button": "Start Deploy"
     },
+    "report": {
+      "badge": "Report a Link",
+      "title": "Anonymous abuse reports",
+      "description": "Paste a short link URL or slug for admin review.",
+      "success_inline": "Report submitted.",
+      "target_placeholder": "https://s.clhs.dev/example",
+      "reason_placeholder": "Reason",
+      "details_placeholder": "Details",
+      "turnstile_missing_title": "Turnstile is not configured",
+      "turnstile_missing_description": "Anonymous reports are temporarily unavailable.",
+      "verify_required": "Please complete the verification.",
+      "submit_success": "Report submitted",
+      "submit_failed": "Failed to submit report",
+      "submit": "Submit"
+    },
     "logos": {
       "title": "Built with awesome technologies"
     },
@@ -474,17 +489,35 @@
   "reports": {
     "title": "Abuse Reports",
     "description": "Review and manage link abuse reports",
+    "student_title": "Reports",
+    "student_description": "Submit reports and review your report history.",
+    "submit_title": "Submit Report",
+    "submit_description": "Report an active short link for admin review.",
     "load_failed": "Failed to load reports",
     "empty": "No abuse reports found",
+    "student_empty": "No reports found.",
     "slug": "Slug",
+    "target_placeholder": "Short link URL or slug",
     "reason": "Reason",
+    "details": "Details",
     "reporter": "Reporter",
+    "status_label": "Status",
     "created_at": "Reported At",
     "actions": "Actions",
+    "refresh": "Refresh",
+    "submit": "Submit",
+    "submit_success": "Report submitted",
+    "submit_failed": "Failed to submit report",
     "keep_active": "Keep Link Active",
     "disable": "Disable Link",
     "delete": "Delete Link",
     "action_success": "Action completed successfully",
-    "action_failed": "Action failed"
+    "action_failed": "Action failed",
+    "status": {
+      "open": "Open",
+      "reviewing": "Reviewing",
+      "resolved": "Resolved",
+      "rejected": "Rejected"
+    }
   }
 }
