@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { watchDebounced } from '@vueuse/core'
 import { Loader, RefreshCw, Shield, UserCheck, UserX } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -45,7 +46,7 @@ async function loadUsers() {
   }
   catch (e) {
     console.error(e)
-    error.value = e instanceof Error ? e.message : String(e)
+    error.value = toErrorMessage(e)
   }
   finally {
     loading.value = false
@@ -82,7 +83,7 @@ async function updateUser(item: ManagedUser, patch: Pick<ManagedUser, 'role'> | 
   catch (e) {
     console.error(e)
     toast.error('Failed to update user', {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
   finally {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Link } from '@/types'
+import { toErrorMessage } from '#shared/utils/error'
 import { createExportFilename } from '#shared/utils/export-file'
 import { Download, Loader } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -55,7 +56,7 @@ async function handleExport() {
   }
   catch (error) {
     toast.error(t('migrate.export.failed'), {
-      description: error instanceof Error ? error.message : String(error),
+      description: toErrorMessage(error),
     })
   }
   finally {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { AlertCircle } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import { z } from 'zod'
@@ -34,7 +35,7 @@ async function handleSubmit() {
     removeToken()
     console.error(e)
     toast.error(t('login.failed'), {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
 }

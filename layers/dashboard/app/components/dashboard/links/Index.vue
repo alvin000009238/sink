@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CounterData, Link, LinkListResponse, LinkUpdateType } from '@/types'
+import { toErrorMessage } from '#shared/utils/error'
 import { useInfiniteScroll } from '@vueuse/core'
 import { Loader } from 'lucide-vue-next'
 
@@ -8,6 +9,7 @@ const linksStore = useDashboardLinksStore()
 const links = ref<Link[]>([])
 const listComplete = ref(false)
 const listError = ref(false)
+const listErrorMessage = ref('')
 const limit = 24
 let cursor = ''
 
@@ -87,6 +89,7 @@ async function getLinks() {
   catch (error) {
     console.error(error)
     listError.value = true
+    listErrorMessage.value = toErrorMessage(error)
   }
 }
 
@@ -153,6 +156,9 @@ linksStore.onLinkUpdate(({ link, type }) => {
     class="flex items-center justify-center text-sm"
   >
     {{ $t('links.load_failed') }}
+    <span v-if="listErrorMessage" class="text-muted-foreground">
+      {{ listErrorMessage }}
+    </span>
     <Button variant="link" @click="getLinks">
       {{ $t('common.try_again') }}
     </Button>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DateRange, DateValue } from 'reka-ui'
+import { toErrorMessage } from '#shared/utils/error'
 import { createExportFilename } from '#shared/utils/export-file'
 import { getLocalTimeZone } from '@internationalized/date'
 import { useForm } from '@tanstack/vue-form'
@@ -47,7 +48,7 @@ const form = useForm({
     }
     catch (error) {
       toast.error(t('migrate.access_export.failed'), {
-        description: error instanceof Error ? error.message : String(error),
+        description: toErrorMessage(error),
       })
     }
     finally {

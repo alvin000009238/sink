@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Link } from '@/types'
+import { toErrorMessage } from '#shared/utils/error'
 import { toast } from 'vue-sonner'
 
 const props = defineProps<{
@@ -24,7 +25,9 @@ async function deleteLink() {
   }
   catch (error) {
     console.error(error)
-    toast.error(t('links.delete_failed'))
+    toast.error(t('links.delete_failed'), {
+      description: toErrorMessage(error),
+    })
   }
 }
 </script>

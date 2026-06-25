@@ -19,13 +19,15 @@ export default eventHandler(async (event) => {
   if (!token) {
     throw createError({
       status: 401,
-      statusText: 'Unauthorized',
+      message: 'Missing login token. Please sign in again.',
+      statusText: 'Missing login token. Please sign in again.',
     })
   }
   if (token.length < 8) {
     throw createError({
       status: 401,
-      statusText: 'Token is too short',
+      message: 'Login token is too short. Check the token and try again.',
+      statusText: 'Login token is too short. Check the token and try again.',
     })
   }
 
@@ -42,7 +44,8 @@ export default eventHandler(async (event) => {
   if (!user) {
     throw createError({
       status: 401,
-      statusText: 'Unauthorized',
+      message: 'Invalid login token or expired session. Please sign in again.',
+      statusText: 'Invalid login token or expired session. Please sign in again.',
     })
   }
 

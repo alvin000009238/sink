@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Link, LinkFormData } from '@/types'
 import { LinkSchema, nanoid } from '#shared/schemas/link'
+import { toErrorMessage } from '#shared/utils/error'
 import { isMaskedLinkPassword } from '#shared/utils/link-password'
 import { useForm } from '@tanstack/vue-form'
 import { ExternalLink, Shuffle, Sparkles } from 'lucide-vue-next'
@@ -97,7 +98,7 @@ const form = useForm({
     catch (error) {
       console.error(error)
       toast.error(props.isEdit ? t('links.update_failed') : t('links.create_failed'), {
-        description: error instanceof Error ? error.message : String(error),
+        description: toErrorMessage(error),
       })
     }
   },
@@ -143,7 +144,7 @@ async function aiSlug() {
   catch (error) {
     console.error(error)
     toast.error(t('links.ai_slug_failed'), {
-      description: error instanceof Error ? error.message : String(error),
+      description: toErrorMessage(error),
     })
   }
   finally {

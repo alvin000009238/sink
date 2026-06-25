@@ -42,7 +42,8 @@ export async function scopeQueryToOwnedLinks<T extends Query>(event: H3Event, qu
     if (requestedSlugs.some(slug => !ownedSlugs.has(slug))) {
       throw createError({
         status: 403,
-        statusText: 'Forbidden',
+        message: 'You can only view analytics for links you own.',
+        statusText: 'You can only view analytics for links you own.',
       })
     }
 

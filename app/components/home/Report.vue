@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { AlertCircle, CheckCircle2, Loader, Send } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 
@@ -14,6 +15,8 @@ interface TurnstileRenderOptions {
   'sitekey': string
   'action': string
   'size': 'invisible'
+  'execution': 'execute'
+  'appearance': 'execute'
   'callback': (token: string) => void
   'error-callback': () => void
   'expired-callback': () => void
@@ -72,6 +75,8 @@ function renderTurnstile() {
     'sitekey': siteKey.value,
     'action': 'turnstile-spin-v1',
     'size': 'invisible',
+    'execution': 'execute',
+    'appearance': 'execute',
     'callback': (token) => {
       resolveTurnstile?.(token)
       resolveTurnstile = undefined
@@ -137,7 +142,7 @@ async function submitReport() {
   catch (e) {
     console.error(e)
     toast.error(t('home.report.submit_failed'), {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
   finally {
@@ -181,8 +186,7 @@ async function submitReport() {
           <Input v-model="target" :placeholder="$t('home.report.target_placeholder')" aria-label="Reported short link" />
           <Input v-model="reason" :placeholder="$t('home.report.reason_placeholder')" aria-label="Report reason" />
           <Textarea v-model="details" :placeholder="$t('home.report.details_placeholder')" aria-label="Report details" />
-          <!-- eslint-disable-next-line better-tailwindcss/no-unregistered-classes -->
-          <div v-if="siteKey" ref="turnstileContainer" class="cf-turnstile" />
+          <div v-if="siteKey" ref="turnstileContainer" />
           <Alert v-else variant="destructive">
             <AlertTitle>{{ $t('home.report.turnstile_missing_title') }}</AlertTitle>
             <AlertDescription>{{ $t('home.report.turnstile_missing_description') }}</AlertDescription>

@@ -59,7 +59,7 @@ function toCsv(rows: AccessExportRow[]): string {
 
 export default eventHandler(async (event) => {
   if (getRouterParam(event, 'action') !== 'export') {
-    throw createError({ status: 404, statusText: 'Not Found' })
+    throw createError({ status: 404, message: 'Stats action not found. Use /api/stats/export.', statusText: 'Stats action not found. Use /api/stats/export.' })
   }
 
   const query = await scopeQueryToOwnedLinks(event, await getValidatedQuery(event, StatsExportQuerySchema.parse))

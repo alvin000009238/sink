@@ -32,7 +32,8 @@ function targetToSlug(event: H3Event, target: string): string {
   catch {
     throw createError({
       status: 400,
-      statusText: 'Invalid slug',
+      message: 'Enter a valid short link URL or slug.',
+      statusText: 'Enter a valid short link URL or slug.',
     })
   }
 
@@ -41,7 +42,8 @@ function targetToSlug(event: H3Event, target: string): string {
   if (!parsed.success) {
     throw createError({
       status: 400,
-      statusText: 'Invalid slug',
+      message: 'Enter a valid short link URL or slug.',
+      statusText: 'Enter a valid short link URL or slug.',
     })
   }
 
@@ -61,7 +63,8 @@ export async function createLinkReport(event: H3Event, target: string, reason: s
   if (!link) {
     throw createError({
       status: 404,
-      statusText: 'Link not found',
+      message: 'Short link not found. Check the URL or slug and try again.',
+      statusText: 'Short link not found. Check the URL or slug and try again.',
     })
   }
 
@@ -79,14 +82,16 @@ export async function verifyTurnstile(event: H3Event, token: string): Promise<vo
 
     throw createError({
       status: 403,
-      statusText: 'Turnstile rejected the request',
+      message: 'Turnstile verification failed. Please try again.',
+      statusText: 'Turnstile verification failed. Please try again.',
     })
   }
 
   if (!config.turnstileSecretKey) {
     throw createError({
       status: 500,
-      statusText: 'Turnstile is not configured',
+      message: 'Turnstile is not configured. Contact an administrator.',
+      statusText: 'Turnstile is not configured. Contact an administrator.',
     })
   }
 
@@ -104,7 +109,8 @@ export async function verifyTurnstile(event: H3Event, token: string): Promise<vo
   if (!response.ok) {
     throw createError({
       status: 502,
-      statusText: 'Turnstile verification failed',
+      message: 'Could not verify Turnstile right now. Please try again later.',
+      statusText: 'Could not verify Turnstile right now. Please try again later.',
     })
   }
 
@@ -112,7 +118,8 @@ export async function verifyTurnstile(event: H3Event, token: string): Promise<vo
   if (!result.success) {
     throw createError({
       status: 403,
-      statusText: 'Turnstile rejected the request',
+      message: 'Turnstile verification failed. Please try again.',
+      statusText: 'Turnstile verification failed. Please try again.',
     })
   }
 }

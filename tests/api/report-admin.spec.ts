@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { createTestSession, fetchWithAuth, fetchWithToken, getCachedLink, getStoredLinkStatus, postJson, postJsonWithToken } from '../utils'
 
+interface ErrorResponse {
+  message?: string
+  statusMessage?: string
+  statusText?: string
+}
+
+function responseMessage(body: ErrorResponse): string {
+  return body.message || body.statusMessage || body.statusText || ''
+}
+
 describe.sequential('reports and admin moderation', () => {
   it('lets students report links and lets admins disable them', async () => {
     const ownerToken = await createTestSession(`owner-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`)
@@ -105,5 +115,31 @@ describe.sequential('reports and admin moderation', () => {
         reporter_email: null,
       }),
     ]))
+  })
+
+  it('returns useful anonymous report errors', async () => {
+    const invalidSlugResponse = await postJson('/api/link/anonymous-report', {
+      slug: '%E0%A4%A',
+      reason: 'abuse',
+      turnstileToken: 'test-turnstile-token',
+    }, false)
+    expect(invalidSlugResponse.status).toBe(400)
+    expect(responseMessage(await invalidSlugResponse.json() as ErrorResponse)).toContain('valid short link')
+
+    const missingLinkResponse = await postJson('/api/link/anonymous-report', {
+      slug: `missing-${crypto.randomUUID()}`,
+      reason: 'abuse',
+      turnstileToken: 'test-turnstile-token',
+    }, false)
+    expect(missingLinkResponse.status).toBe(404)
+    expect(responseMessage(await missingLinkResponse.json() as ErrorResponse)).toContain('Short link not found')
+
+    const failedTurnstileResponse = await postJson('/api/link/anonymous-report', {
+      slug: `missing-${crypto.randomUUID()}`,
+      reason: 'abuse',
+      turnstileToken: 'wrong-token',
+    }, false)
+    expect(failedTurnstileResponse.status).toBe(403)
+    expect(responseMessage(await failedTurnstileResponse.json() as ErrorResponse)).toContain('Turnstile verification failed')
   })
 })

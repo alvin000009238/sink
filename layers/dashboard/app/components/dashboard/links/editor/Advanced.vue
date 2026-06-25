@@ -2,6 +2,7 @@
 import type { DateValue } from '@internationalized/date'
 import type { Component } from 'vue'
 import type { AnyFieldApi, LinkFormData } from '@/types'
+import { toErrorMessage } from '#shared/utils/error'
 import { isMaskedLinkPassword, LINK_PASSWORD_MASK_PREFIX } from '#shared/utils/link-password'
 import { today } from '@internationalized/date'
 import { CalendarIcon, Plus, Sparkles, Trash2 } from 'lucide-vue-next'
@@ -86,7 +87,7 @@ async function aiOg() {
   catch (error) {
     console.error(error)
     toast.error(t('links.ai_og_failed'), {
-      description: error instanceof Error ? error.message : String(error),
+      description: toErrorMessage(error),
     })
   }
   finally {

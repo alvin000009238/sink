@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ImportData } from '#shared/schemas/import'
 import { ImportDataSchema } from '#shared/schemas/import'
+import { toErrorMessage } from '#shared/utils/error'
 import { createExportFilename } from '#shared/utils/export-file'
 import { AlertCircle, CheckCircle, Download, SkipForward, Upload, XCircle } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -143,7 +144,7 @@ async function handleImport() {
           index: batchStart + idx,
           slug: link.slug,
           url: link.url,
-          reason: error instanceof Error ? error.message : 'Batch import failed',
+          reason: toErrorMessage(error),
         })
       })
     }

@@ -42,7 +42,8 @@ export default eventHandler(async (event) => {
   if (!row || (user.role !== 'admin' && row.owner_id !== user.id)) {
     throw createError({
       status: 404,
-      statusText: 'Link not found',
+      message: 'Link not found or you do not have permission to delete it.',
+      statusText: 'Link not found or you do not have permission to delete it.',
     })
   }
 

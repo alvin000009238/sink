@@ -180,7 +180,7 @@ export default eventHandler(async (event) => {
         return sendRedirect(event, notFoundRedirect, 302)
       }
 
-      throw createError({ status: 404, statusText: 'Link not found' })
+      throw createError({ status: 404, message: 'Short link not found. Check the URL and try again.', statusText: 'Short link not found. Check the URL and try again.' })
     }
   }
 })

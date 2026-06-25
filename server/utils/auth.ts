@@ -44,7 +44,8 @@ export function requireAuthUser(event: H3Event): AuthUser {
   if (!user) {
     throw createError({
       status: 401,
-      statusText: 'Unauthorized',
+      message: 'Missing login token. Please sign in again.',
+      statusText: 'Missing login token. Please sign in again.',
     })
   }
 
@@ -56,7 +57,8 @@ export function requireAdmin(event: H3Event): AuthUser {
   if (user.role !== 'admin') {
     throw createError({
       status: 403,
-      statusText: 'Forbidden',
+      message: 'Admin permission is required for this action.',
+      statusText: 'Admin permission is required for this action.',
     })
   }
 
@@ -143,7 +145,8 @@ export function decodeGoogleIdTokenPayload(idToken: string): GoogleIdTokenPayloa
   if (!payload) {
     throw createError({
       status: 401,
-      statusText: 'Invalid Google ID token',
+      message: 'Invalid Google sign-in response. Please sign in again.',
+      statusText: 'Invalid Google sign-in response. Please sign in again.',
     })
   }
 
@@ -158,7 +161,8 @@ export function googlePayloadToUser(payload: GoogleIdTokenPayload, clientId: str
   if (!validIssuer || payload.aud !== clientId || !email || !verified || !email.endsWith(`@${hostedDomain}`) || !payload.sub) {
     throw createError({
       status: 401,
-      statusText: 'Unauthorized Google account',
+      message: `Use a verified ${hostedDomain} Google account to sign in.`,
+      statusText: `Use a verified ${hostedDomain} Google account to sign in.`,
     })
   }
 

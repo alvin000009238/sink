@@ -10,6 +10,16 @@ interface VerifyResponse {
   }
 }
 
+interface ErrorResponse {
+  message?: string
+  statusMessage?: string
+  statusText?: string
+}
+
+function responseMessage(body: ErrorResponse): string {
+  return body.message || body.statusMessage || body.statusText || ''
+}
+
 describe('/api/verify', () => {
   it('returns user data with valid auth', async () => {
     const response = await fetchWithAuth('/api/verify')
@@ -49,6 +59,7 @@ describe('/api/verify', () => {
   it('returns 401 when accessing without auth', async () => {
     const response = await fetch('/api/verify')
     expect(response.status).toBe(401)
+    expect(responseMessage(await response.json() as ErrorResponse)).toContain('Missing login token')
   })
 
   it('returns 401 with invalid token', async () => {
@@ -56,5 +67,6 @@ describe('/api/verify', () => {
       headers: { Authorization: 'Bearer invalid-token-12345' },
     })
     expect(response.status).toBe(401)
+    expect(responseMessage(await response.json() as ErrorResponse)).toContain('Invalid login token')
   })
 })

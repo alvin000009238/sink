@@ -198,7 +198,8 @@ export async function deleteLink(event: H3Event, slug: string): Promise<void> {
   if (!row) {
     throw createError({
       status: 404,
-      statusText: 'Link not found',
+      message: 'Link not found or you do not have permission to delete it.',
+      statusText: 'Link not found or you do not have permission to delete it.',
     })
   }
 
@@ -213,7 +214,8 @@ export async function setLinkStatus(event: H3Event, slug: string, status: 'activ
   if (!row) {
     throw createError({
       status: 404,
-      statusText: 'Link not found',
+      message: 'Link not found. Check the slug and try again.',
+      statusText: 'Link not found. Check the slug and try again.',
     })
   }
 

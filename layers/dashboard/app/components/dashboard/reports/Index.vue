@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { Ban, CheckCircle2, Loader, RefreshCw, Send, Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 
@@ -38,7 +39,7 @@ async function loadReports() {
   }
   catch (e) {
     console.error(e)
-    error.value = e instanceof Error ? e.message : String(e)
+    error.value = toErrorMessage(e)
   }
   finally {
     loading.value = false
@@ -70,7 +71,7 @@ async function submitReport() {
   catch (e) {
     console.error(e)
     toast.error(t('reports.submit_failed'), {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
   finally {
@@ -98,7 +99,7 @@ async function updateStatus(report: LinkReport, status: 'active' | 'disabled' | 
   catch (e) {
     console.error(e)
     toast.error(t('reports.action_failed'), {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
   finally {

@@ -33,6 +33,7 @@ export default eventHandler(async (event) => {
 
   throw createError({
     status: 404,
-    statusText: 'Not Found',
+    message: 'Short link not found. Check the slug and try again.',
+    statusText: 'Short link not found. Check the slug and try again.',
   })
 })

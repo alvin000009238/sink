@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { watchDebounced } from '@vueuse/core'
 import { Loader, RefreshCw, ShieldX, Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
@@ -32,7 +33,7 @@ async function loadEntries() {
   }
   catch (e) {
     console.error(e)
-    error.value = e instanceof Error ? e.message : String(e)
+    error.value = toErrorMessage(e)
   }
   finally {
     loading.value = false
@@ -59,7 +60,7 @@ async function blockSlug() {
   catch (e) {
     console.error(e)
     toast.error('Failed to block slug', {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
   finally {
@@ -83,7 +84,7 @@ async function unblockSlug(entry: BlockedSlug) {
   catch (e) {
     console.error(e)
     toast.error('Failed to unblock slug', {
-      description: e instanceof Error ? e.message : String(e),
+      description: toErrorMessage(e),
     })
   }
   finally {

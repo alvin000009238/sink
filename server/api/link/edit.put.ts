@@ -53,7 +53,8 @@ export default eventHandler(async (event) => {
   if (!existingLink) {
     throw createError({
       status: 404,
-      statusText: 'Link not found',
+      message: 'Link not found or you do not have permission to edit it.',
+      statusText: 'Link not found or you do not have permission to edit it.',
     })
   }
 

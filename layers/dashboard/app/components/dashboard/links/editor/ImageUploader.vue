@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { ImagePlus, Loader2, X } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import { IMAGE_ALLOWED_TYPES, IMAGE_MAX_SIZE } from '@/utils/image'
@@ -48,7 +49,7 @@ async function handleFile(file: File) {
   catch (error) {
     console.error(error)
     toast.error(t('links.form.image_upload_failed'), {
-      description: error instanceof Error ? error.message : String(error),
+      description: toErrorMessage(error),
     })
   }
   finally {

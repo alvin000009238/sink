@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toErrorMessage } from '#shared/utils/error'
 import { CloudUpload, Loader } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 
@@ -17,7 +18,7 @@ async function handleBackup() {
   }
   catch (error) {
     toast.error(t('migrate.backup.failed'), {
-      description: error instanceof Error ? error.message : String(error),
+      description: toErrorMessage(error),
     })
   }
   finally {
