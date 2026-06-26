@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createTestSession, fetch, fetchWithToken, postJsonWithToken } from '../utils'
+import { createTestSession, fetch, fetchWithAuth, fetchWithToken, postJsonWithToken } from '../utils'
 
 describe.sequential('admin user management', () => {
   it('lets admins list, disable, and reactivate student users', async () => {
@@ -92,5 +92,29 @@ describe.sequential('admin user management', () => {
       },
     })
     expect(allowed.status).toBe(200)
+  })
+
+  it('allows only the system admin to promote users to admin', async () => {
+    const studentEmail = `student-promote-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`
+    const adminEmail = `admin-promote-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`
+    await createTestSession(studentEmail)
+    const adminToken = await createTestSession(adminEmail, 'admin')
+    const studentId = `test:${studentEmail}`
+
+    expect((await postJsonWithToken('/api/admin/user-status', adminToken, {
+      id: studentId,
+      role: 'admin',
+    })).status).toBe(403)
+
+    const promoted = await fetchWithAuth('/api/admin/user-status', {
+      method: 'POST',
+      body: JSON.stringify({ id: studentId, role: 'admin' }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+    expect(promoted.status).toBe(200)
+    expect(await promoted.json()).toEqual(expect.objectContaining({
+      id: studentId,
+      role: 'admin',
+    }))
   })
 })

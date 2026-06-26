@@ -44,6 +44,13 @@ export default eventHandler(async (event) => {
     })
   }
 
+  if (body.role === 'admin' && getAuthSource(event) !== 'site-token') {
+    throw createError({
+      status: 403,
+      statusText: 'Only the system admin can promote users to admin',
+    })
+  }
+
   const updates: string[] = []
   const binds: (string | number)[] = []
 
