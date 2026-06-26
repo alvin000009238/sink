@@ -25,13 +25,23 @@ export async function prepareIncomingLink(event: H3Event, link: Link): Promise<v
   await detectUnsafeLink(event, link)
 }
 
-export async function detectUnsafeLink(event: H3Event, link: Pick<Link, 'url' | 'unsafe'>): Promise<void> {
-  if (link.unsafe !== undefined)
+export async function detectUnsafeLink(event: H3Event, link: Pick<Link, 'url' | 'apple' | 'google' | 'geo' | 'unsafe'>): Promise<void> {
+  if (link.unsafe === true)
     return
 
-  const safe = await isSafeUrl(event, link.url)
-  if (!safe)
+  const urls = [
+    link.url,
+    link.apple,
+    link.google,
+    ...Object.values(link.geo ?? {}),
+  ].filter(Boolean)
+  const unsafe = await Promise.all(urls.map(url => isSafeUrl(event, url!)))
+  if (unsafe.some(safe => !safe)) {
     link.unsafe = true
+  }
+  else {
+    delete link.unsafe
+  }
 }
 
 export async function hashLinkPasswordForCreate(link: Link): Promise<void> {
@@ -75,7 +85,7 @@ export async function applyEditableLinkPassword(newLink: Link, password?: string
 
 function cleanupOptionalLinkFields(newLink: Link, link: Link): void {
   for (const field of editableOptionalLinkFields) {
-    if (link[field] === undefined)
+    if (field !== 'unsafe' && link[field] === undefined)
       delete newLink[field]
   }
 }

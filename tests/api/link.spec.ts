@@ -467,12 +467,12 @@ describe.sequential('/api/link/edit unsafe', () => {
     expect(data.unsafe).toBe(true)
   })
 
-  it('removes unsafe flag when not provided in edit', async () => {
+  it('preserves unsafe flag when not provided in edit', async () => {
     const response = await putJson('/api/link/edit', { url: unsafePayload.url, slug: unsafePayload.slug })
     expect(response.status).toBe(201)
 
     const data = await response.json() as { link: { unsafe?: boolean } }
-    expect(data.link.unsafe).toBeUndefined()
+    expect(data.link.unsafe).toBe(true)
   })
 
   it('sets unsafe flag via edit', async () => {

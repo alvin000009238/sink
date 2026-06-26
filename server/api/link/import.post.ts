@@ -107,6 +107,8 @@ export default eventHandler(async (event) => {
         updatedAt: linkData.updatedAt || now,
       }
 
+      await prepareIncomingLink(event, link)
+
       if (link.password) {
         link.password = await normalizeLinkPasswordForStorage(link.password)
       }
