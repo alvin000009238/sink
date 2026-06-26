@@ -33,7 +33,9 @@
     "admin_title": "管理員登入",
     "admin_description": "請輸入站點密碼以登入管理員帳號",
     "admin_login_link": "管理員登入",
-    "back_to_google": "返回 Google 登入"
+    "back_to_google": "返回 Google 登入",
+    "disallowed_useragent_title": "不支援的瀏覽器環境",
+    "disallowed_useragent_desc": "偵測到您目前使用應用程式內建瀏覽器（如 LINE 或 Messenger）。由於 Google 的安全性限制，這將導致無法正常進行 Google 登入。請點擊畫面右上角的選單（如三個點），選擇「以瀏覽器開啟」（如 Chrome 或 Safari）以完成登入。"
   },
   "logout": {
     "title": "登出？",

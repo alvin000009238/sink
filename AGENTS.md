@@ -157,6 +157,8 @@ D1 migrations live in `migrations/`. Run `pnpm gen:types` after changing `wrangl
 - `/api/link/list` supports `domain`, `creator`/`owner`, `purpose`, and `order` filters. `purpose` currently reuses the link comment value.
 - Admins can migrate legacy KV JSON link records into D1 through `/api/admin/kv-migrate`; use `prefix`, `cursor`, and `limit` to run it in batches.
 - `slug_blacklist` and app `reserveSlug` values are enforced before new link creation. Admins list and manage blacklist entries through `/api/admin/slug-blacklist`. Students are limited by `dailyCreateLimit`; admins are exempt.
+- To prevent `403: disallowed_useragent` errors during Google OAuth, the login page (`layers/dashboard/app/components/login/index.vue`) checks the `userAgent` to detect in-app browsers/webviews (e.g. LINE, Facebook, Instagram, WeChat). It disables the Google login button and displays a warning card directing users to open the link in their system browser.
+
 
 ## Testing Patterns
 

@@ -33,7 +33,9 @@
     "admin_title": "Admin Login",
     "admin_description": "Enter your site token to login as administrator",
     "admin_login_link": "Admin Login",
-    "back_to_google": "Back to Google Login"
+    "back_to_google": "Back to Google Login",
+    "disallowed_useragent_title": "Unsupported Browser Environment",
+    "disallowed_useragent_desc": "We detected that you are using an in-app browser (e.g., LINE, Messenger). Google prevents login in these webviews for security. Please tap the menu in the top-right and select 'Open in browser' (e.g., Chrome or Safari) to log in."
   },
   "logout": {
     "title": "LogOut?",
