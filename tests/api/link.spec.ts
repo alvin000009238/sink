@@ -117,6 +117,18 @@ describe.sequential('/api/link/create', () => {
     expect(response.status).toBe(400)
   })
 
+  it('rejects non-http redirect URLs', async () => {
+    for (const payload of [
+      { url: 'javascript:alert(1)', slug: `bad-url-${crypto.randomUUID()}` },
+      { url: 'https://example.com', slug: `bad-apple-${crypto.randomUUID()}`, apple: 'javascript:alert(1)' },
+      { url: 'https://example.com', slug: `bad-google-${crypto.randomUUID()}`, google: 'data:text/html,hello' },
+      { url: 'https://example.com', slug: `bad-geo-${crypto.randomUUID()}`, geo: { US: 'javascript:alert(1)' } },
+    ]) {
+      const response = await postJson('/api/link/create', payload)
+      expect(response.status).toBe(400)
+    }
+  })
+
   it('accepts lowercase geo key and returns uppercase key', async () => {
     const slug = `geo-lower-${crypto.randomUUID()}`
     const response = await postJson('/api/link/create', {
