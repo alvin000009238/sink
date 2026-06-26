@@ -21,7 +21,7 @@ export default defineWorkersConfig(({ mode }) => {
           singleWorker: true,
           isolatedStorage: false,
           wrangler: {
-            configPath: './wrangler.jsonc',
+            configPath: './wrangler-test.jsonc',
           },
           miniflare: {
             cf: true,
