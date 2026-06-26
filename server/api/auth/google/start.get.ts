@@ -22,6 +22,7 @@ export default eventHandler((event) => {
   setCookie(event, OAUTH_STATE_COOKIE, state, {
     httpOnly: true,
     sameSite: 'lax',
+    secure: isSecureRequest(event),
     path: '/',
     maxAge: 600,
   })

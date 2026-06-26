@@ -57,6 +57,7 @@ export default eventHandler(async (event) => {
   setCookie(event, SESSION_COOKIE, session, {
     httpOnly: true,
     sameSite: 'lax',
+    secure: isSecureRequest(event),
     path: '/',
     maxAge: Number(sessionTtlSeconds),
   })

@@ -11,6 +11,16 @@ describe('/api/auth/google', () => {
     expect(response.headers.get('set-cookie')).toContain('SinkOAuthState=')
   })
 
+  it('marks OAuth state cookies secure on HTTPS requests', async () => {
+    const response = await fetch('/api/auth/google/start', {
+      redirect: 'manual',
+      headers: { 'x-forwarded-proto': 'https' },
+    })
+
+    expect(response.status).toBe(302)
+    expect(response.headers.get('set-cookie')).toContain('Secure')
+  })
+
   it('rejects callback without matching state cookie', async () => {
     const response = await fetch('/api/auth/google/callback?state=bad&code=test', { redirect: 'manual' })
 

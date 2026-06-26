@@ -45,6 +45,11 @@ export function getAuthSource(event: H3Event): AuthSource | null {
   return event.context.auth?.source ?? null
 }
 
+export function isSecureRequest(event: H3Event): boolean {
+  const forwardedProto = getHeader(event, 'x-forwarded-proto')?.split(',')[0]?.trim().toLowerCase()
+  return forwardedProto === 'https' || getRequestProtocol(event) === 'https'
+}
+
 export function requireAuthUser(event: H3Event): AuthUser {
   const user = getAuthUser(event)
   if (!user) {
