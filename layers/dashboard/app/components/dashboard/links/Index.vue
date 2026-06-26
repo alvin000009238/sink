@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { CounterData, Link, LinkListResponse, LinkUpdateType } from '@/types'
+import type { CounterData, Link, LinkListResponse, LinkUpdateType, ListedLink } from '@/types'
 import { toErrorMessage } from '#shared/utils/error'
 import { useInfiniteScroll } from '@vueuse/core'
-import { Loader } from 'lucide-vue-next'
+import { Loader, X } from 'lucide-vue-next'
 
 const linksStore = useDashboardLinksStore()
+const route = useRoute()
 
-const links = ref<Link[]>([])
+const links = ref<ListedLink[]>([])
 const listComplete = ref(false)
 const listError = ref(false)
 const listErrorMessage = ref('')
@@ -18,6 +19,8 @@ provide('linksCountersMap', countersMap)
 
 const pendingIds = new Set<string>()
 const defaultCounters: CounterData = Object.freeze({ visits: 0, visitors: 0, referers: 0 })
+const creatorFilter = computed(() => typeof route.query.creator === 'string' ? route.query.creator : '')
+const statusFilter = computed(() => typeof route.query.status === 'string' ? route.query.status : '')
 
 async function fetchCounters(ids: string[]) {
   if (!ids.length)
@@ -75,6 +78,8 @@ async function getLinks() {
       query: {
         limit,
         cursor,
+        creator: creatorFilter.value || undefined,
+        status: statusFilter.value || undefined,
       },
     })
     const newLinks = data.links.filter(Boolean)
@@ -93,6 +98,14 @@ async function getLinks() {
   }
 }
 
+function resetLinks() {
+  links.value = []
+  cursor = ''
+  listComplete.value = false
+  listError.value = false
+  listErrorMessage.value = ''
+}
+
 const { isLoading } = useInfiniteScroll(
   scrollContainer as unknown as Ref<HTMLElement | null>,
   getLinks,
@@ -108,13 +121,16 @@ const { isLoading } = useInfiniteScroll(
 function updateLinkList(link: Link, type: LinkUpdateType) {
   if (type === 'edit') {
     const index = links.value.findIndex(l => l.id === link.id)
-    links.value[index] = link
+    links.value[index] = { ...links.value[index], ...link }
   }
   else if (type === 'delete') {
     const index = links.value.findIndex(l => l.id === link.id)
     links.value.splice(index, 1)
   }
   else {
+    if (creatorFilter.value)
+      return
+
     links.value.unshift(link)
     linksStore.sortBy = 'newest'
   }
@@ -123,9 +139,40 @@ function updateLinkList(link: Link, type: LinkUpdateType) {
 linksStore.onLinkUpdate(({ link, type }) => {
   updateLinkList(link, type)
 })
+
+watch([creatorFilter, statusFilter], () => {
+  resetLinks()
+  getLinks()
+})
 </script>
 
 <template>
+  <div
+    v-if="creatorFilter || statusFilter"
+    class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+  >
+    <span>
+      Showing
+      <template v-if="statusFilter">
+        {{ statusFilter }}
+      </template>
+      links
+      <template v-if="creatorFilter">
+        created by {{ creatorFilter }}
+      </template>
+    </span>
+    <Button
+      as-child
+      size="sm"
+      variant="outline"
+      aria-label="Clear link filters"
+    >
+      <NuxtLink to="/dashboard/links">
+        <X class="h-4 w-4" />
+        Clear
+      </NuxtLink>
+    </Button>
+  </div>
   <section
     class="
       grid grid-cols-1 gap-4

@@ -24,8 +24,21 @@ export type LinkFormData = {
 
 export type { AnyFieldApi }
 
+export type LinkStatus = 'active' | 'disabled' | 'deleted' | 'pending'
+
+export interface LinkOwner {
+  id: string
+  email: string
+  name: string | null
+}
+
+export type ListedLink = Link & {
+  status?: LinkStatus
+  owner?: LinkOwner
+}
+
 export interface LinkListResponse {
-  links: Link[]
+  links: ListedLink[]
   cursor: string
   list_complete: boolean
 }

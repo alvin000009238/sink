@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { CounterData, Link } from '@/types'
+import type { CounterData, ListedLink } from '@/types'
 import { useClipboard } from '@vueuse/core'
 import { CalendarPlus2, Copy, CopyCheck, Eraser, Flame, Hourglass, Link as LinkIcon, MousePointerClick, QrCode, ShieldAlert, SquareChevronDown, SquarePen, Users } from 'lucide-vue-next'
 import { parseURL } from 'ufo'
 import { toast } from 'vue-sonner'
 
 const props = defineProps<{
-  link: Link
+  link: ListedLink
 }>()
 
 const { t, locale } = useI18n()
@@ -26,6 +26,8 @@ function getLinkHost(url: string): string | undefined {
 
 const shortLink = computed(() => `${origin}/${props.link.slug}`)
 const linkIcon = computed(() => `https://unavatar.webp.se/${getLinkHost(props.link.url)}?fallback=https://sink.cool/icon.png`)
+const isInactive = computed(() => props.link.status && props.link.status !== 'active')
+const cardComponent = computed(() => isInactive.value ? 'div' : resolveComponent('NuxtLink'))
 
 const { copy, copied } = useClipboard({ source: shortLink.value, copiedDuring: 400 })
 
@@ -38,9 +40,10 @@ function copyLink() {
 <template>
   <Card class="h-full">
     <CardContent class="flex-1">
-      <NuxtLink
+      <component
+        :is="cardComponent"
         class="flex h-full flex-col space-y-3"
-        :to="`/dashboard/link?slug=${link.slug}`"
+        :to="isInactive ? undefined : `/dashboard/link?slug=${link.slug}`"
       >
         <div class="flex items-center justify-center space-x-3">
           <Avatar>
@@ -67,6 +70,13 @@ function copyLink() {
                 v-if="link.unsafe" variant="destructive" class="ml-1 shrink-0"
               >
                 <ShieldAlert class="h-3 w-3" />
+              </Badge>
+              <Badge
+                v-if="isInactive"
+                variant="destructive"
+                class="ml-1 shrink-0"
+              >
+                {{ link.status }}
               </Badge>
 
               <Button
@@ -130,7 +140,7 @@ function copyLink() {
             </PopoverContent>
           </Popover>
 
-          <Popover v-model:open="editPopoverOpen">
+          <Popover v-if="!isInactive" v-model:open="editPopoverOpen">
             <PopoverTrigger aria-label="More actions">
               <SquareChevronDown
                 class="h-5 w-5"
@@ -213,6 +223,14 @@ function copyLink() {
               </TooltipProvider>
             </template>
             <Separator orientation="vertical" />
+            <Badge
+              v-if="link.owner"
+              variant="secondary"
+              class="max-w-40 shrink-0 truncate"
+            >
+              {{ link.owner.name || link.owner.email }}
+            </Badge>
+            <Separator v-if="link.owner" orientation="vertical" />
             <span class="truncate">{{ link.url }}</span>
           </div>
           <div
@@ -237,7 +255,7 @@ function copyLink() {
             </template>
           </div>
         </div>
-      </NuxtLink>
+      </component>
     </CardContent>
   </Card>
 </template>

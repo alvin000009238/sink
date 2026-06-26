@@ -47,6 +47,13 @@ defineRouteMeta({
         schema: { type: 'string', enum: ['asc', 'desc'], default: 'desc' },
         description: 'Sort links by creation time',
       },
+      {
+        name: 'status',
+        in: 'query',
+        required: false,
+        schema: { type: 'string', enum: ['active', 'disabled', 'deleted', 'pending', 'all'], default: 'active' },
+        description: 'Admin-only status filter',
+      },
     ],
   },
 })
@@ -59,12 +66,13 @@ const ListQuerySchema = z.object({
   order: z.enum(['asc', 'desc']).default('desc'),
   owner: z.string().trim().max(320).optional(),
   purpose: z.string().trim().max(2048).optional(),
+  status: z.enum(['active', 'disabled', 'deleted', 'pending', 'all']).optional(),
 })
 
 export default eventHandler(async (event) => {
-  const { creator, cursor, domain, limit, order, owner, purpose } = await getValidatedQuery(event, ListQuerySchema.parse)
+  const { creator, cursor, domain, limit, order, owner, purpose, status } = await getValidatedQuery(event, ListQuerySchema.parse)
 
-  const list = await listLinks(event, { creator, cursor, domain, limit, order, owner, purpose })
+  const list = await listLinks(event, { creator, cursor, domain, limit, order, owner, purpose, status })
   return {
     ...list,
     links: sanitizeLinksPassword(list.links),

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toErrorMessage } from '#shared/utils/error'
 import { watchDebounced } from '@vueuse/core'
-import { Loader, RefreshCw, Shield, UserCheck, UserX } from 'lucide-vue-next'
+import { LinkIcon, Loader, RefreshCw, Shield, UserCheck, UserX } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 
 interface ManagedUser {
@@ -267,6 +267,16 @@ onMounted(loadUsers)
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-2">
+                  <Button
+                    as-child
+                    size="icon"
+                    variant="outline"
+                    :aria-label="`Manage links for ${item.email}`"
+                  >
+                    <NuxtLink :to="{ path: '/dashboard/links', query: { creator: item.email, status: 'all' } }">
+                      <LinkIcon class="h-4 w-4" />
+                    </NuxtLink>
+                  </Button>
                   <Button
                     size="icon"
                     variant="outline"

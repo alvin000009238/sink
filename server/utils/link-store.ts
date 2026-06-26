@@ -4,9 +4,22 @@ import type { z } from 'zod'
 import { parseURL, stringifyParsedURL } from 'ufo'
 
 type Link = z.infer<typeof LinkSchema>
+type LinkStatus = 'active' | 'disabled' | 'deleted' | 'pending'
+type ListedLink = Link & {
+  status: LinkStatus
+  owner: {
+    id: string
+    email: string
+    name: string | null
+  }
+}
 
 interface LinkRow {
   payload_json: string
+  status: LinkStatus
+  owner_id: string
+  owner_email: string
+  owner_name: string | null
 }
 
 interface ExistingLinkRow {
@@ -34,6 +47,18 @@ function getDomain(url: string): string {
 
 function parseStoredLink(row: Pick<LinkRow, 'payload_json'> | null): Link | null {
   return row ? JSON.parse(row.payload_json) as Link : null
+}
+
+function parseListedLink(row: LinkRow): ListedLink {
+  return {
+    ...JSON.parse(row.payload_json) as Link,
+    status: row.status,
+    owner: {
+      id: row.owner_id,
+      email: row.owner_email,
+      name: row.owner_name,
+    },
+  }
 }
 
 function metadataForLink(link: Link): Record<string, unknown> {
@@ -251,10 +276,11 @@ interface ListLinksOptions {
   order?: 'asc' | 'desc'
   owner?: string
   purpose?: string
+  status?: LinkStatus | 'all'
 }
 
 interface ListLinksResult {
-  links: (Link | null)[]
+  links: ListedLink[]
   list_complete: boolean
   cursor?: string
 }
@@ -268,15 +294,28 @@ export async function listLinks(event: H3Event, options: ListLinksOptions): Prom
   const user = getAuthUser(event)
   const order = options.order === 'asc' ? 'ASC' : 'DESC'
   const creator = options.creator ?? options.owner
-  const clauses = [
-    'links.status = \'active\'',
-    '(links.expiration IS NULL OR links.expiration > ?)',
-  ]
-  const binds: (number | string)[] = [now]
+  const clauses: string[] = ['1 = 1']
+  const binds: (number | string)[] = []
 
   if (user?.role !== 'admin') {
+    clauses.push('links.status = \'active\'')
+    clauses.push('(links.expiration IS NULL OR links.expiration > ?)')
+    binds.push(now)
     clauses.push('links.owner_id = ?')
     binds.push(user?.id ?? SYSTEM_OWNER_ID)
+  }
+  else if (options.status && options.status !== 'all') {
+    clauses.push('links.status = ?')
+    binds.push(options.status)
+    if (options.status === 'active') {
+      clauses.push('(links.expiration IS NULL OR links.expiration > ?)')
+      binds.push(now)
+    }
+  }
+  else if (!options.status) {
+    clauses.push('links.status = \'active\'')
+    clauses.push('(links.expiration IS NULL OR links.expiration > ?)')
+    binds.push(now)
   }
   if (options.domain) {
     clauses.push('links.domain = ?')
@@ -292,7 +331,12 @@ export async function listLinks(event: H3Event, options: ListLinksOptions): Prom
   }
 
   const result = await DB.prepare(`
-    SELECT links.payload_json
+    SELECT
+      links.payload_json,
+      links.status,
+      students.id as owner_id,
+      students.email as owner_email,
+      students.name as owner_name
     FROM links
     JOIN students ON students.id = links.owner_id
     WHERE ${clauses.join(' AND ')}
@@ -301,7 +345,7 @@ export async function listLinks(event: H3Event, options: ListLinksOptions): Prom
   `).bind(...binds, limit + 1, offset).all<LinkRow>()
 
   const rows = result.results.slice(0, limit)
-  const links = rows.map(row => parseStoredLink(row))
+  const links = rows.map(row => parseListedLink(row))
   const listComplete = result.results.length <= limit
 
   return {

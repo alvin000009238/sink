@@ -24,6 +24,7 @@ describe.sequential('link create policy', () => {
   it('lets admins manage the slug blacklist', async () => {
     const token = await createTestSession(`blacklist-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`)
     const slug = `admin-blocked-${crypto.randomUUID()}`
+    const specialSlug = `blocked.example:${crypto.randomUUID()}`
 
     expect((await postJsonWithToken('/api/admin/slug-blacklist', token, {
       slug,
@@ -35,11 +36,19 @@ describe.sequential('link create policy', () => {
       slug,
       reason: 'test',
     })).status).toBe(200)
+    expect((await postJson('/api/admin/slug-blacklist', {
+      slug: specialSlug,
+      reason: 'special',
+    })).status).toBe(200)
     const blacklistResponse = await fetchWithAuth(`/api/admin/slug-blacklist?search=${slug}`)
     expect(blacklistResponse.status).toBe(200)
     const blacklist = await blacklistResponse.json() as { slug: string, reason: string | null }[]
     expect(blacklist).toEqual(expect.arrayContaining([
       expect.objectContaining({ slug, reason: 'test' }),
+    ]))
+    const specialBlacklist = await (await fetchWithAuth('/api/admin/slug-blacklist?search=blocked.example:')).json() as { slug: string, reason: string | null }[]
+    expect(specialBlacklist).toEqual(expect.arrayContaining([
+      expect.objectContaining({ slug: specialSlug, reason: 'special' }),
     ]))
     expect((await postJson('/api/link/create', {
       url: 'https://example.com/admin-blocked',
@@ -48,6 +57,10 @@ describe.sequential('link create policy', () => {
 
     expect((await postJson('/api/admin/slug-blacklist', {
       slug,
+      blocked: false,
+    })).status).toBe(200)
+    expect((await postJson('/api/admin/slug-blacklist', {
+      slug: specialSlug,
       blocked: false,
     })).status).toBe(200)
     const unblockedResponse = await fetchWithAuth(`/api/admin/slug-blacklist?search=${slug}`)

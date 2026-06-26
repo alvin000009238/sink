@@ -1,4 +1,3 @@
-import { LinkSchema } from '#shared/schemas/link'
 import { z } from 'zod'
 
 defineRouteMeta({
@@ -8,8 +7,10 @@ defineRouteMeta({
   },
 })
 
+const BlockedSlugSchema = z.string().trim().min(1).max(2048)
+
 const SlugBlacklistSchema = z.object({
-  slug: LinkSchema.shape.slug.removeDefault().min(1).optional(),
+  slug: BlockedSlugSchema.optional(),
   slugs: z.string().trim().max(10000).optional(),
   reason: z.string().trim().max(256).optional(),
   blocked: z.boolean().default(true),
@@ -23,8 +24,7 @@ export default eventHandler(async (event) => {
     ...(body.slugs?.split(/\r?\n/) ?? []),
   ].map(slug => slug.trim()).filter(Boolean).map((slug) => {
     const normalizedSlug = normalizeSlug(event, slug)
-    LinkSchema.shape.slug.removeDefault().min(1).parse(normalizedSlug)
-    return normalizedSlug
+    return BlockedSlugSchema.parse(normalizedSlug)
   }))]
 
   if (!slugs.length) {
