@@ -1,9 +1,13 @@
+import type { H3Event } from 'h3'
+import type { AuthSource } from '../utils/auth'
+
 export default eventHandler(async (event) => {
   if (!event.path.startsWith('/api/') || event.path.startsWith('/api/auth/') || event.path === '/api/link/anonymous-report' || event.path === '/api/public-config')
     return
 
   const authHeader = getHeader(event, 'Authorization')
   let token = ''
+  let source: AuthSource = 'bearer'
 
   if (authHeader) {
     const trimmed = authHeader.trim()
@@ -14,6 +18,7 @@ export default eventHandler(async (event) => {
 
   if (!token) {
     token = getCookie(event, SESSION_COOKIE) || ''
+    source = 'cookie'
   }
 
   if (!token) {
@@ -36,7 +41,7 @@ export default eventHandler(async (event) => {
 
   if (token === siteToken) {
     await ensureSystemOwner(DB)
-    event.context.auth = { user: systemAuthUser() }
+    event.context.auth = { user: systemAuthUser(), source: 'site-token' }
     return
   }
 
@@ -49,5 +54,36 @@ export default eventHandler(async (event) => {
     })
   }
 
-  event.context.auth = { user }
+  if (source === 'cookie' && user.role === 'admin' && isUnsafeAdminRequest(event) && !isSameOriginRequest(event)) {
+    throw createError({
+      status: 403,
+      message: 'Same-origin request is required for cookie-authenticated admin changes.',
+      statusText: 'Same-origin request is required for cookie-authenticated admin changes.',
+    })
+  }
+
+  event.context.auth = { user, source }
 })
+
+function isUnsafeAdminRequest(event: H3Event): boolean {
+  return event.path.startsWith('/api/admin/') && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(event.method)
+}
+
+function isSameOriginRequest(event: H3Event): boolean {
+  const requestHost = getRequestHost(event)
+  const origin = getHeader(event, 'Origin')
+  if (origin)
+    return getUrlHost(origin) === requestHost
+
+  const referer = getHeader(event, 'Referer')
+  return referer ? getUrlHost(referer) === requestHost : false
+}
+
+function getUrlHost(value: string): string | null {
+  try {
+    return new URL(value).host
+  }
+  catch {
+    return null
+  }
+}

@@ -13,6 +13,8 @@ export interface AuthUser {
   status: 'active' | 'disabled'
 }
 
+export type AuthSource = 'bearer' | 'cookie' | 'site-token'
+
 interface SessionRow extends AuthUser {
   expires_at: number
 }
@@ -37,6 +39,10 @@ export async function hashSessionToken(token: string): Promise<string> {
 
 export function getAuthUser(event: H3Event): AuthUser | null {
   return event.context.auth?.user ?? null
+}
+
+export function getAuthSource(event: H3Event): AuthSource | null {
+  return event.context.auth?.source ?? null
 }
 
 export function requireAuthUser(event: H3Event): AuthUser {
