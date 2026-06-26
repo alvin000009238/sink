@@ -136,9 +136,9 @@
       }
     },
     "cta": {
-      "title": "立即部署",
-      "description": "只需幾個簡單的點擊，您就可以免費開始部署",
-      "button": "開始部署"
+      "title": "立即開始使用",
+      "description": "立即使用短連結服務",
+      "button": "取得原始碼"
     },
     "logos": {
       "title": "使用優秀的技術構建"
@@ -173,7 +173,7 @@
     }
   },
   "dashboard": {
-    "title": "儀表板",
+    "title": "開始使用",
     "visits": "訪問次數",
     "views": "瀏覽次數",
     "visitors": "訪客人數",

@@ -136,9 +136,9 @@
       }
     },
     "cta": {
-      "title": "Deployment immediately",
-      "description": "With just a few simple clicks, you can start deploying without any expenses",
-      "button": "Start Deploy"
+      "title": "Get Started Now",
+      "description": "Use the short link service now",
+      "button": "Get Source Code"
     },
     "report": {
       "badge": "Report a Link",
@@ -173,7 +173,7 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Get Started",
     "visits": "Visits",
     "views": "Views",
     "visitors": "Visitors",

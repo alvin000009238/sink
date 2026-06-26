@@ -136,9 +136,9 @@
       }
     },
     "cta": {
-      "title": "立即部署",
-      "description": "只需几个简单的点击，您就可以免费开始部署",
-      "button": "开始部署"
+      "title": "立即开始使用",
+      "description": "立即使用短链接服务",
+      "button": "获取源码"
     },
     "logos": {
       "title": "使用优秀的技术构建"
@@ -173,7 +173,7 @@
     }
   },
   "dashboard": {
-    "title": "仪表盘",
+    "title": "开始使用",
     "visits": "访问量",
     "views": "浏览量",
     "visitors": "访客数",

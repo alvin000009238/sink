@@ -27,7 +27,7 @@ const { github } = useAppConfig()
               size="lg"
             >
               <a
-                :href="`${github}?tab=readme-ov-file#%EF%B8%8F-deployment`"
+                :href="github"
                 target="_blank"
                 :title="$t('home.cta.button')"
               >
