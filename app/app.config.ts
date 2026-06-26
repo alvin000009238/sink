@@ -1,5 +1,6 @@
 export default defineAppConfig({
   title: 'clhs 短網址',
+  github: 'https://github.com/miantiao-me/Sink',
   description: '一個簡單、快速、安全的短網址服務。',
   image: 'https://s.clhs.dev/banner.png',
   previewTTL: 300, // 5 minutes
