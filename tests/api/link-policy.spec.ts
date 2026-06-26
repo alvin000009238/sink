@@ -116,6 +116,32 @@ describe.sequential('link create policy', () => {
     expect(limitedResponse.status).toBe(400)
   })
 
+  it('lets admins change the student daily link limit', async () => {
+    const token = await createTestSession(`quota-config-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`)
+
+    expect((await postJsonWithToken('/api/admin/settings', token, { dailyCreateLimit: 1 })).status).toBe(403)
+
+    const updateResponse = await postJson('/api/admin/settings', { dailyCreateLimit: 1 })
+    expect(updateResponse.status).toBe(200)
+    expect(await updateResponse.json()).toEqual({ dailyCreateLimit: 1 })
+
+    const settingsResponse = await fetchWithAuth('/api/admin/settings')
+    expect(settingsResponse.status).toBe(200)
+    expect(await settingsResponse.json()).toEqual({ dailyCreateLimit: 1 })
+
+    expect((await postJsonWithToken('/api/link/create', token, {
+      url: 'https://example.com/quota-config/first',
+      slug: `quota-config-first-${crypto.randomUUID()}`,
+    })).status).toBe(201)
+
+    expect((await postJsonWithToken('/api/link/create', token, {
+      url: 'https://example.com/quota-config/second',
+      slug: `quota-config-second-${crypto.randomUUID()}`,
+    })).status).toBe(400)
+
+    await postJson('/api/admin/settings', { dailyCreateLimit: 20 })
+  })
+
   it('does not let students recreate inactive slugs', async () => {
     const token = await createTestSession(`inactive-${crypto.randomUUID()}@student.clhs.tyc.edu.tw`)
     const slug = `inactive-${crypto.randomUUID()}`

@@ -99,7 +99,7 @@ export async function enforceLinkCreatePolicy(event: H3Event, slug: string): Pro
   if (!user || user.role === 'admin')
     return
 
-  const limit = Math.max(0, Math.floor(Number(useRuntimeConfig(event).dailyCreateLimit)))
+  const limit = await getDailyCreateLimit(event)
   if (limit === 0)
     return
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { toErrorMessage } from '#shared/utils/error'
 import { watchDebounced } from '@vueuse/core'
-import { Loader, RefreshCw, ShieldX, Trash2 } from 'lucide-vue-next'
+import { Loader, RefreshCw, Save, ShieldX, Trash2 } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 
 interface BlockedSlug {
@@ -19,17 +19,24 @@ const savingSlug = ref('')
 const error = ref('')
 const search = ref('')
 const slugs = ref('')
+const dailyCreateLimit = ref(20)
+const savingSettings = ref(false)
 
 async function loadEntries() {
   loading.value = true
   error.value = ''
   try {
-    entries.value = await useAPI<BlockedSlug[]>('/api/admin/slug-blacklist', {
-      query: {
-        limit: 100,
-        search: search.value || undefined,
-      },
-    })
+    const [settings, blockedSlugs] = await Promise.all([
+      useAPI<{ dailyCreateLimit: number }>('/api/admin/settings'),
+      useAPI<BlockedSlug[]>('/api/admin/slug-blacklist', {
+        query: {
+          limit: 100,
+          search: search.value || undefined,
+        },
+      }),
+    ])
+    dailyCreateLimit.value = settings.dailyCreateLimit
+    entries.value = blockedSlugs
   }
   catch (e) {
     console.error(e)
@@ -37,6 +44,29 @@ async function loadEntries() {
   }
   finally {
     loading.value = false
+  }
+}
+
+async function saveSettings() {
+  savingSettings.value = true
+  try {
+    const settings = await useAPI<{ dailyCreateLimit: number }>('/api/admin/settings', {
+      method: 'POST',
+      body: {
+        dailyCreateLimit: dailyCreateLimit.value,
+      },
+    })
+    dailyCreateLimit.value = settings.dailyCreateLimit
+    toast.success('Settings saved')
+  }
+  catch (e) {
+    console.error(e)
+    toast.error('Failed to save settings', {
+      description: toErrorMessage(e),
+    })
+  }
+  finally {
+    savingSettings.value = false
   }
 }
 
@@ -116,6 +146,32 @@ onMounted(loadEntries)
         Refresh
       </Button>
     </div>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>Student Quota</CardTitle>
+        <CardDescription>Set how many links each student can create per day. Use 0 for unlimited.</CardDescription>
+      </CardHeader>
+      <CardContent class="flex flex-wrap items-end gap-3">
+        <div class="grid gap-2">
+          <Label for="daily-create-limit">Daily link limit</Label>
+          <Input
+            id="daily-create-limit"
+            v-model.number="dailyCreateLimit"
+            type="number"
+            min="0"
+            max="10000"
+            step="1"
+            class="w-40"
+          />
+        </div>
+        <Button :disabled="savingSettings" @click="saveSettings">
+          <Loader v-if="savingSettings" class="h-4 w-4 animate-spin" />
+          <Save v-else class="h-4 w-4" />
+          Save
+        </Button>
+      </CardContent>
+    </Card>
 
     <Card>
       <CardHeader>

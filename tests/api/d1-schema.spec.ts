@@ -1,9 +1,10 @@
 import { env } from 'cloudflare:test'
 import { beforeAll, describe, expect, it } from 'vitest'
 import schemaSql from '../../migrations/0001_core_schema.sql?raw'
+import settingsSql from '../../migrations/0002_app_settings.sql?raw'
 
 async function applyCoreSchema() {
-  for (const statement of schemaSql.split(';').map(sql => sql.trim()).filter(Boolean))
+  for (const statement of [schemaSql, settingsSql].join('\n').split(';').map(sql => sql.trim()).filter(Boolean))
     await env.DB.prepare(statement).run()
 }
 
@@ -17,7 +18,7 @@ describe.sequential('d1 core schema', () => {
       SELECT name
       FROM sqlite_master
       WHERE type = 'table'
-        AND name IN ('students', 'links', 'link_reports', 'slug_blacklist')
+        AND name IN ('students', 'links', 'link_reports', 'slug_blacklist', 'app_settings')
     `).all<{ name: string }>()
 
     expect(new Set(tables.results.map(table => table.name))).toEqual(new Set([
@@ -25,6 +26,7 @@ describe.sequential('d1 core schema', () => {
       'links',
       'link_reports',
       'slug_blacklist',
+      'app_settings',
     ]))
   })
 
