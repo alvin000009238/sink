@@ -25,8 +25,6 @@ defineRouteMeta({
 })
 
 export default eventHandler(async (event) => {
-  const R2 = requireR2Bucket(event.context.cloudflare.env)
-
   const formData = await readFormData(event)
   const file = formData.get('file') as File | null
   const slug = formData.get('slug') as string | null
@@ -43,6 +41,7 @@ export default eventHandler(async (event) => {
   if (!slugResult.success) {
     throw createError({ status: 400, statusText: 'Invalid slug format' })
   }
+  const normalizedSlug = normalizeSlug(event, slugResult.data)
 
   if (!IMAGE_ALLOWED_TYPES.includes(file.type)) {
     throw createError({ status: 400, statusText: 'Invalid file type. Allowed: jpeg, png, webp, gif' })
@@ -52,8 +51,20 @@ export default eventHandler(async (event) => {
     throw createError({ status: 400, statusText: 'File size exceeds 5MB limit' })
   }
 
+  const user = requireAuthUser(event)
+  const row = await event.context.cloudflare.env.DB.prepare('SELECT owner_id FROM links WHERE slug = ?')
+    .bind(normalizedSlug)
+    .first<{ owner_id: string }>()
+  if (!row) {
+    throw createError({ status: 404, statusText: 'Link not found' })
+  }
+  if (user.role !== 'admin' && row.owner_id !== user.id) {
+    throw createError({ status: 403, statusText: 'You do not have permission to upload images for this link' })
+  }
+
+  const R2 = requireR2Bucket(event.context.cloudflare.env)
   const ext = file.type.split('/')[1]
-  const key = `images/${slug}/${nanoid(10)()}.${ext}`
+  const key = `images/${normalizedSlug}/${nanoid(10)()}.${ext}`
 
   const arrayBuffer = await file.arrayBuffer()
   await R2.put(key, arrayBuffer, {

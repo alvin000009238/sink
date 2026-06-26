@@ -18,6 +18,12 @@
       "dataset": "sink-test"
     }
   ],
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "sink-test"
+    }
+  ],
   "d1_databases": [
     {
       "binding": "DB",
