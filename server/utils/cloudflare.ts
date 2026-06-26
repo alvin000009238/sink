@@ -2,7 +2,6 @@ import type { H3Event } from 'h3'
 
 export function useWAE(event: H3Event, query: string) {
   const { cfAccountId, cfApiToken, testMockWae } = useRuntimeConfig(event)
-  console.info('useWAE', query)
   if (testMockWae)
     return Promise.resolve({ data: [] })
 
